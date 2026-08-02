@@ -245,7 +245,6 @@ cancelButton.addEventListener('click', async () => {
       await loadBookings(bookingDate.value);
     }
     cancelCodeInput.value = '';
-    hideCancelCard();
   } catch (error) {
     showCancelMessage(error.message);
   }
@@ -280,7 +279,6 @@ bookingDate.addEventListener('change', async () => {
 });
 
 window.addEventListener('load', async () => {
-  hideCancelCard();
   cancelCodeInput.value = '';
   const today = new Date().toISOString().slice(0, 10);
   bookingDate.value = today;
