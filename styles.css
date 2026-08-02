@@ -155,6 +155,21 @@ button#save-button {
   color: white;
 }
 
+.copy-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.copy-row input {
+  flex: 1;
+  min-width: 0;
+}
+
+.copy-row button {
+  flex-shrink: 0;
+}
+
 .hidden {
   display: none;
 }
@@ -266,6 +281,15 @@ button#save-button {
   }
 
   button {
+    width: 100%;
+  }
+
+  .copy-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .copy-row button {
     width: 100%;
   }
 
