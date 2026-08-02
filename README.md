@@ -22,6 +22,10 @@ Optional:
 - `DATABASE_SSL`
   - Set to `true` if your database provider requires SSL/TLS.
   - Example: `true`
+- `PGSSLMODE`
+  - Set to `require` for normal SSL connections.
+  - Set to `no-verify` if your database uses a self-signed certificate chain.
+  - Example: `no-verify`
 
 ## How the app uses these variables
 

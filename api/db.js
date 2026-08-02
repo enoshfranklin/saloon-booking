@@ -18,8 +18,8 @@ if (!connectionString) {
 
 const sslEnabled =
   process.env.DATABASE_SSL === 'true' ||
-  process.env.PGSSLMODE === 'require' ||
-  /sslmode=require/i.test(connectionString);
+  /sslmode=(require|no-verify)/i.test(process.env.PGSSLMODE || '') ||
+  /sslmode=(require|no-verify)/i.test(connectionString);
 
 const pool = global.__booking_pool || new Pool({
   connectionString,
