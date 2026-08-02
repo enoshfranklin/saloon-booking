@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saloon Booking Admin</title>
+  <link rel="stylesheet" href="/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Admin Booking Management</h1>
+      <p>View and manage bookings for any date. Use your admin token to update or cancel appointments.</p>
+    </header>
+
+    <section class="booking-panel">
+      <div class="form-card">
+        <h2>Admin Actions</h2>
+        <label>
+          Admin token
+          <input type="password" id="admin-token" placeholder="Enter admin token" />
+        </label>
+        <label>
+          View bookings for date
+          <input type="date" id="booking-date" required />
+        </label>
+        <div class="form-actions">
+          <button type="button" id="admin-load-button" class="secondary">Load bookings</button>
+        </div>
+
+        <div id="edit-booking-card" class="edit-card hidden">
+          <h3>Edit booking</h3>
+          <form id="edit-booking-form">
+            <input type="hidden" id="edit-booking-id" />
+            <label>
+              Date
+              <input type="date" id="edit-booking-date" required />
+            </label>
+            <label>
+              Time
+              <input type="text" id="edit-booking-time" placeholder="9:00 AM" required />
+            </label>
+            <label>
+              Customer name
+              <input type="text" id="edit-customer-name" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" id="edit-customer-phone" />
+            </label>
+            <label>
+              Service
+              <select id="edit-service-type">
+                <option value="">None</option>
+                <option value="Haircut">Haircut</option>
+                <option value="Beard">Beard</option>
+                <option value="Haircut + Beard">Haircut + Beard</option>
+                <option value="Color">Color</option>
+                <option value="Style">Style</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="secondary">Save changes</button>
+              <button type="button" id="cancel-edit" class="secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="list-card">
+        <div class="list-header">
+          <h2>Bookings for <span id="selected-date-label"></span></h2>
+          <button id="today-button" class="secondary">Today</button>
+        </div>
+        <div id="admin-status" class="status-message">Enter your admin token and click Load bookings.</div>
+        <div id="bookings-list" class="bookings-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/admin.js"></script>
+</body>
+</html>
