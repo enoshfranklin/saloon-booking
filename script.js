@@ -210,6 +210,8 @@ bookingForm.addEventListener('submit', async (event) => {
     return;
   }
 
+  await loadBookings(dateValue);
+
   if (conflictExists(booking)) {
     alert('This timeslot is already booked. Please choose another one.');
     renderTimeOptions(dateValue);
