@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Saloon Booking</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Saloon Booking</h1>
+      <p>Choose a date, pick an open timeslot, and manage your appointments.</p>
+    </header>
+
+    <section class="booking-panel">
+      <div class="form-card">
+        <h2>New Booking</h2>
+        <form id="booking-form">
+          <label>
+            Date
+            <input type="date" id="booking-date" required />
+          </label>
+
+          <label>
+            Time slot
+            <select id="booking-time" required></select>
+          </label>
+
+          <label>
+            Customer name
+            <input type="text" id="customer-name" placeholder="Jane Doe" required />
+          </label>
+
+          <label>
+            Phone number (optional)
+            <input type="tel" id="customer-phone" placeholder="(555) 123-4567" />
+          </label>
+
+          <label>
+            Service (optional)
+            <select id="service-type">
+              <option value="">None</option>
+              <option value="Haircut">Haircut</option>
+              <option value="Beard">Beard</option>
+              <option value="Haircut + Beard">Haircut + Beard</option>
+              <option value="Color">Color</option>
+              <option value="Style">Style</option>
+            </select>
+          </label>
+
+          <div class="form-actions">
+            <button type="submit" id="save-button">Save Booking</button>
+          </div>
+        </form>
+      </div>
+
+      <div class="list-card">
+        <div class="list-header">
+          <h2>Bookings for <span id="selected-date-label"></span></h2>
+          <button id="today-button" class="secondary">Today</button>
+        </div>
+        <div id="bookings-list" class="bookings-list"></div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
