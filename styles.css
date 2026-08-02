@@ -1,8 +1,8 @@
 :root {
-  color-scheme: light;
-  font-family: Inter, system-ui, sans-serif;
-  background: #f5f6fb;
-  color: #111827;
+  color-scheme: dark;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: radial-gradient(circle at top center, #0f172a 0%, #020617 40%, #020617 100%);
+  color: #f8fafc;
 }
 
 * {
@@ -12,7 +12,19 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: linear-gradient(180deg, #eef2ff 0%, #f8fafc 100%);
+  background: radial-gradient(circle at top center, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    linear-gradient(180deg, #070b18 0%, #03050c 100%);
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(248, 113, 113, 0.12), transparent 18%),
+    radial-gradient(circle at 80% 30%, rgba(59, 130, 246, 0.12), transparent 18%),
+    radial-gradient(circle at 50% 80%, rgba(249, 115, 22, 0.08), transparent 18%);
+  pointer-events: none;
 }
 
 .container {
@@ -28,13 +40,16 @@ header {
 
 h1 {
   margin: 0;
-  font-size: clamp(2rem, 2.6vw, 3rem);
+  font-size: clamp(2.2rem, 3.2vw, 4rem);
+  letter-spacing: -0.04em;
+  color: #f87171;
+  text-shadow: 0 0 20px rgba(248, 113, 113, 0.55), 0 0 40px rgba(59, 130, 246, 0.25);
 }
 
 p {
   margin: 12px auto 0;
-  max-width: 640px;
-  color: #4b5563;
+  max-width: 680px;
+  color: #cbd5e1;
 }
 
 .booking-panel {
@@ -45,42 +60,50 @@ p {
 
 .form-card,
 .list-card {
-  background: #ffffff;
-  border: 1px solid #e5e7eb;
-  border-radius: 24px;
-  padding: 24px;
-  box-shadow: 0 20px 55px rgba(15, 23, 42, 0.08);
+  background: rgba(15, 23, 42, 0.92);
+  border: 1px solid rgba(248, 113, 113, 0.28);
+  border-radius: 28px;
+  padding: 28px;
+  box-shadow: 0 24px 80px rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(12px);
 }
 
 .form-card h2,
-.list-card h2 {
+.list-card h2,
+.edit-card h3 {
   margin-top: 0;
+  color: #f8fafc;
 }
 
 label {
   display: grid;
   gap: 8px;
   margin-bottom: 18px;
-  font-weight: 600;
-  color: #111827;
+  font-weight: 700;
+  color: #f8fafc;
 }
 
 input,
 select {
   width: 100%;
-  padding: 12px 14px;
-  border: 1px solid #d1d5db;
-  border-radius: 14px;
+  padding: 14px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  border-radius: 16px;
   font-size: 1rem;
-  background: #f9fafb;
-  color: #111827;
+  background: rgba(15, 23, 42, 0.85);
+  color: #e2e8f0;
+}
+
+input::placeholder,
+select::placeholder {
+  color: #94a3b8;
 }
 
 input:focus,
 select:focus {
   outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.12);
+  border-color: #fb7185;
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.18);
 }
 
 .form-actions {
@@ -92,20 +115,30 @@ select:focus {
 
 button {
   border: none;
-  border-radius: 14px;
-  padding: 12px 20px;
+  border-radius: 16px;
+  padding: 14px 22px;
   font-weight: 700;
   cursor: pointer;
+  transition: transform 0.18s ease, background 0.18s ease, box-shadow 0.18s ease;
+}
+
+button:hover {
+  transform: translateY(-1px);
 }
 
 button#save-button {
-  background: #4338ca;
+  background: linear-gradient(135deg, #ef4444 0%, #f97316 100%);
   color: #ffffff;
+  box-shadow: 0 18px 30px rgba(239, 68, 68, 0.25);
 }
 
 button.secondary {
-  background: #eef2ff;
-  color: #4338ca;
+  background: rgba(59, 130, 246, 0.16);
+  color: #93c5fd;
+}
+
+button.secondary:hover {
+  background: rgba(59, 130, 246, 0.28);
 }
 
 button.hidden,
@@ -125,11 +158,11 @@ button.hidden,
 }
 
 .booking-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 18px;
-  padding: 18px;
+  border: 1px solid rgba(248, 113, 113, 0.16);
+  border-radius: 22px;
+  padding: 20px;
   margin-bottom: 16px;
-  background: #f9fafb;
+  background: rgba(15, 23, 42, 0.85);
 }
 
 .booking-meta {
@@ -142,7 +175,11 @@ button.hidden,
 
 .booking-meta p {
   margin: 0;
-  color: #374151;
+  color: #e2e8f0;
+}
+
+.booking-meta strong {
+  color: #f87171;
 }
 
 .booking-actions {
@@ -153,24 +190,26 @@ button.hidden,
 }
 
 .booking-actions button {
-  padding: 10px 14px;
-  border-radius: 12px;
+  padding: 10px 16px;
+  border-radius: 14px;
 }
 
 .booking-actions button.edit {
   background: #2563eb;
   color: white;
+  box-shadow: 0 10px 24px rgba(37, 99, 235, 0.22);
 }
 
 .booking-actions button.delete {
   background: #ef4444;
   color: white;
+  box-shadow: 0 10px 24px rgba(239, 68, 68, 0.22);
 }
 
 .no-bookings {
-  color: #6b7280;
+  color: #94a3b8;
   padding: 28px 18px;
-  border: 1px dashed #d1d5db;
+  border: 1px dashed rgba(148, 163, 184, 0.28);
   border-radius: 18px;
   text-align: center;
 }
@@ -179,9 +218,15 @@ button.hidden,
   margin-top: 16px;
   padding: 14px 18px;
   border-radius: 16px;
-  background: #fef3c7;
-  color: #92400e;
-  font-weight: 600;
+  background: rgba(254, 243, 199, 0.18);
+  color: #fbbf24;
+  font-weight: 700;
+}
+
+.edit-card {
+  margin-top: 18px;
+  border-top: 1px solid rgba(148, 163, 184, 0.18);
+  padding-top: 18px;
 }
 
 @media (max-width: 900px) {
