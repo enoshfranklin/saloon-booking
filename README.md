@@ -7,7 +7,10 @@ Set these values in Vercel for the project:
 - `DATABASE_URL`
   - Your PostgreSQL connection string.
   - Example: `postgres://username:password@hostname:5432/database_name`
-  - If you use Vercel Postgres, copy the provided database URL from the Vercel dashboard.
+  - If you use Supabase, you can also provide one of these Supabase env values:
+    - `POSTGRES_URL_NON_POOLING`
+    - `POSTGRES_URL`
+  - The app will use `DATABASE_URL` first, then Supabase Postgres URLs as fallbacks.
 
 - `ADMIN_SECRET`
   - A strong secret token used to authorize admin edits and cancellations.

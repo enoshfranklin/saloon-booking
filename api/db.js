@@ -1,8 +1,29 @@
 const { Pool } = require('pg');
 
+function getConnectionString() {
+  return (
+    process.env.DATABASE_URL ||
+    process.env.POSTGRES_URL_NON_POOLING ||
+    process.env.POSTGRES_URL ||
+    process.env.POSTGRES_DATABASE_URL ||
+    process.env.POSTGRES_DATABASE ||
+    null
+  );
+}
+
+const connectionString = getConnectionString();
+if (!connectionString) {
+  throw new Error('Database connection string is not configured. Set DATABASE_URL or a Supabase Postgres URL env var.');
+}
+
+const sslEnabled =
+  process.env.DATABASE_SSL === 'true' ||
+  process.env.PGSSLMODE === 'require' ||
+  /sslmode=require/i.test(connectionString);
+
 const pool = global.__booking_pool || new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: process.env.DATABASE_SSL === 'true' ? { rejectUnauthorized: false } : false,
+  connectionString,
+  ssl: sslEnabled ? { rejectUnauthorized: false } : false,
 });
 
 global.__booking_pool = pool;
