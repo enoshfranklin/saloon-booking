@@ -11,6 +11,7 @@ const todayButton = document.getElementById('today-button');
 const saveButton = document.getElementById('save-button');
 const cancelCodeInput = document.getElementById('cancel-code');
 const cancelButton = document.getElementById('cancel-button');
+const copyCodeButton = document.getElementById('copy-code-button');
 const cancelMessage = document.getElementById('cancel-message');
 
 const API_ROOT = '/api/bookings';
@@ -206,7 +207,8 @@ bookingForm.addEventListener('submit', async (event) => {
 
   try {
     const result = await createBooking(booking);
-    showStatus(`Booking created. Save this cancellation code: ${result.id}`);
+    cancelCodeInput.value = result.id;
+    showStatus('Booking created. Your cancellation code is ready to copy.');
     await loadBookings(dateValue);
     resetForm();
   } catch (error) {
@@ -233,6 +235,21 @@ cancelButton.addEventListener('click', async () => {
     cancelCodeInput.value = '';
   } catch (error) {
     showCancelMessage(error.message);
+  }
+});
+
+copyCodeButton.addEventListener('click', async () => {
+  const code = cancelCodeInput.value.trim();
+  if (!code) {
+    showCancelMessage('No cancellation code to copy.');
+    return;
+  }
+
+  try {
+    await navigator.clipboard.writeText(code);
+    showCancelMessage('Cancellation code copied to clipboard.');
+  } catch (error) {
+    showCancelMessage('Copy failed. Please copy the code manually.');
   }
 });
 

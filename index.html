@@ -55,11 +55,16 @@
         </form>
 
         <div class="cancel-card">
-          <h3>Cancel a booking</h3>
-          <label>
-            Cancellation code
-            <input type="text" id="cancel-code" placeholder="Paste your cancellation code" />
-          </label>
+          <h3>Booking saved</h3>
+          <div class="copy-box">
+            <label>
+              Cancellation code
+              <div class="copy-row">
+                <input type="text" id="cancel-code" placeholder="Your code appears here" readonly />
+                <button type="button" id="copy-code-button" class="secondary">Copy</button>
+              </div>
+            </label>
+          </div>
           <div class="form-actions">
             <button type="button" id="cancel-button" class="secondary">Cancel Booking</button>
           </div>
