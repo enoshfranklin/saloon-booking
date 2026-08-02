@@ -90,10 +90,20 @@ function resetForm() {
   renderTimeOptions(bookingDate.value);
 }
 
+async function parseJsonOrText(response) {
+  const text = await response.text();
+  try {
+    return JSON.parse(text);
+  } catch (_) {
+    return { error: text || 'Unexpected response from server' };
+  }
+}
+
 async function fetchBookings(dateValue) {
   const response = await fetch(`${API_ROOT}?date=${encodeURIComponent(dateValue)}`);
   if (!response.ok) {
-    throw new Error('Unable to load bookings');
+    const payload = await parseJsonOrText(response);
+    throw new Error(payload.error || 'Unable to load bookings');
   }
   return response.json();
 }
@@ -105,7 +115,7 @@ async function createBooking(booking) {
     body: JSON.stringify(booking),
   });
   if (!response.ok) {
-    const payload = await response.json();
+    const payload = await parseJsonOrText(response);
     throw new Error(payload.error || 'Unable to create booking');
   }
   return response.json();
