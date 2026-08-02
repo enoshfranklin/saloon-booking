@@ -1,4 +1,4 @@
-const { pool, initDb } = require('./db');
+const { pool, initDb } = require('../db');
 const crypto = require('crypto');
 
 function jsonResponse(res, status, payload) {
@@ -12,7 +12,7 @@ function parseBody(req) {
   return typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 }
 
-const { handleError } = require('./error');
+const { handleError } = require('../error');
 
 module.exports = async (req, res) => {
   try {
