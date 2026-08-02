@@ -3,6 +3,7 @@ const selectedDateLabel = document.getElementById('selected-date-label');
 const todayButton = document.getElementById('today-button');
 const adminTokenInput = document.getElementById('admin-token');
 const bookingDate = document.getElementById('booking-date');
+const adminStatus = document.getElementById('admin-status');
 const editBookingCard = document.getElementById('edit-booking-card');
 const editBookingForm = document.getElementById('edit-booking-form');
 const editBookingId = document.getElementById('edit-booking-id');
@@ -25,6 +26,28 @@ function getAdminToken() {
   return adminTokenInput.value.trim();
 }
 
+function displayAdminMessage(message, isError = false) {
+  if (!adminStatus) return;
+  adminStatus.textContent = message;
+  adminStatus.style.background = isError ? '#fee2e2' : '#fef3c7';
+  adminStatus.style.color = isError ? '#991b1b' : '#92400e';
+}
+
+function parseJsonOrText(response) {
+  return response.text().then((text) => {
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      return { error: text || 'Unexpected response from server' };
+    }
+  });
+}
+
+function getAdminHeaders() {
+  const token = getAdminToken();
+  return token ? { 'x-admin-secret': token } : {};
+}
+
 function showEditForm() {
   editBookingCard.classList.remove('hidden');
 }
@@ -45,39 +68,57 @@ function fillEditForm(booking) {
 }
 
 async function fetchBookings(dateValue) {
-  const response = await fetch(`${API_ROOT}?date=${encodeURIComponent(dateValue)}`);
-  if (!response.ok) {
-    throw new Error('Unable to load bookings');
+  const token = getAdminToken();
+  if (!token) {
+    throw new Error('Enter admin token to view bookings.');
   }
+
+  const response = await fetch(`${API_ROOT}/admin?date=${encodeURIComponent(dateValue)}`, {
+    headers: getAdminHeaders(),
+  });
+
+  if (!response.ok) {
+    const payload = await parseJsonOrText(response);
+    throw new Error(payload.error || 'Unable to load bookings');
+  }
+
   return response.json();
 }
 
 async function deleteBooking(id) {
   const token = getAdminToken();
+  if (!token) {
+    throw new Error('Enter admin token to cancel bookings.');
+  }
+
   const response = await fetch(`${API_ROOT}/${id}`, {
     method: 'DELETE',
-    headers: { 'x-admin-secret': token },
+    headers: getAdminHeaders(),
   });
 
   if (!response.ok && response.status !== 204) {
-    const payload = await response.json();
+    const payload = await parseJsonOrText(response);
     throw new Error(payload.error || 'Unable to delete booking');
   }
 }
 
 async function updateBooking(booking) {
   const token = getAdminToken();
+  if (!token) {
+    throw new Error('Enter admin token to update bookings.');
+  }
+
   const response = await fetch(`${API_ROOT}/${booking.id}`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',
-      'x-admin-secret': token,
+      ...getAdminHeaders(),
     },
     body: JSON.stringify(booking),
   });
 
   if (!response.ok) {
-    const payload = await response.json();
+    const payload = await parseJsonOrText(response);
     throw new Error(payload.error || 'Unable to update booking');
   }
   return response.json();
@@ -122,9 +163,25 @@ function renderBookings(bookings, dateValue) {
 
 async function loadBookings(dateValue) {
   currentDate = dateValue;
-  const bookings = await fetchBookings(dateValue);
   hideEditForm();
-  renderBookings(bookings, dateValue);
+  selectedDateLabel.textContent = formatDate(new Date(dateValue));
+
+  if (!getAdminToken()) {
+    displayAdminMessage('Enter your admin token to view bookings.', true);
+    bookingsList.innerHTML = '';
+    return;
+  }
+
+  displayAdminMessage('Loading bookings...', false);
+
+  try {
+    const bookings = await fetchBookings(dateValue);
+    displayAdminMessage('', false);
+    renderBookings(bookings, dateValue);
+  } catch (error) {
+    displayAdminMessage(error.message, true);
+    bookingsList.innerHTML = '';
+  }
 }
 
 bookingDate.addEventListener('change', async () => {
@@ -206,5 +263,9 @@ todayButton.addEventListener('click', () => {
 window.addEventListener('load', async () => {
   const today = new Date().toISOString().slice(0, 10);
   bookingDate.value = today;
-  await loadBookings(today);
+  if (getAdminToken()) {
+    await loadBookings(today);
+  } else {
+    displayAdminMessage('Enter your admin token to view bookings.', true);
+  }
 });
