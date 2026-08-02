@@ -46,7 +46,7 @@ module.exports = async (req, res) => {
 
     try {
       const result = await pool.query(
-        'UPDATE bookings SET date = $1, time = $2, customer_name = $3, phone = $4, service = $5 WHERE id = $6 RETURNING id, date, time, customer_name AS customerName, phone, service',
+        'UPDATE bookings SET date = $1, time = $2, customer_name = $3, phone = $4, service = $5 WHERE id = $6 RETURNING id, date, time, customer_name AS "customerName", phone, service',
         [date, time, customerName, phone || null, service || null, id]
       );
 

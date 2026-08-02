@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
       }
 
       const result = await pool.query(
-        'SELECT id, date, time, customer_name AS customerName, phone, service FROM bookings WHERE date = $1 ORDER BY time ASC',
+        'SELECT id, date, time, customer_name AS "customerName", phone, service FROM bookings WHERE date = $1 ORDER BY time ASC',
         [date]
       );
       return jsonResponse(res, 200, result.rows);
