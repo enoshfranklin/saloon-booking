@@ -20,42 +20,42 @@ module.exports = async (req, res) => {
     const { method, query } = req;
 
     if (method === 'GET') {
-    const date = query.date;
-    if (!date) {
-      return jsonResponse(res, 400, { error: 'Missing date query param' });
-    }
-
-    const result = await pool.query(
-      'SELECT id, date, time, customer_name AS customerName, phone, service FROM bookings WHERE date = $1 ORDER BY time ASC',
-      [date]
-    );
-    return jsonResponse(res, 200, result.rows);
-  }
-
-  if (method === 'POST') {
-    const { date, time, customerName, phone, service } = parseBody(req);
-    if (!date || !time || !customerName) {
-      return jsonResponse(res, 400, { error: 'date, time, and customerName are required' });
-    }
-
-    const id = crypto.randomUUID();
-    try {
-      await pool.query(
-        'INSERT INTO bookings (id, date, time, customer_name, phone, service) VALUES ($1, $2, $3, $4, $5, $6)',
-        [id, date, time, customerName, phone || null, service || null]
-      );
-    } catch (error) {
-      if (error.code === '23505') {
-        return jsonResponse(res, 409, { error: 'Timeslot already booked' });
+      const date = query.date;
+      if (!date) {
+        return jsonResponse(res, 400, { error: 'Missing date query param' });
       }
-      return jsonResponse(res, 500, { error: 'Unable to save booking' });
+
+      const result = await pool.query(
+        'SELECT id, date, time, customer_name AS customerName, phone, service FROM bookings WHERE date = $1 ORDER BY time ASC',
+        [date]
+      );
+      return jsonResponse(res, 200, result.rows);
     }
 
-    return jsonResponse(res, 201, { id, date, time, customerName, phone, service });
-  }
+    if (method === 'POST') {
+      const { date, time, customerName, phone, service } = parseBody(req);
+      if (!date || !time || !customerName) {
+        return jsonResponse(res, 400, { error: 'date, time, and customerName are required' });
+      }
 
-  return jsonResponse(res, 405, { error: 'Method not allowed' });
-} catch (error) {
-  return handleError(res, error);
-}
+      const id = crypto.randomUUID();
+      try {
+        await pool.query(
+          'INSERT INTO bookings (id, date, time, customer_name, phone, service) VALUES ($1, $2, $3, $4, $5, $6)',
+          [id, date, time, customerName, phone || null, service || null]
+        );
+      } catch (error) {
+        if (error.code === '23505') {
+          return jsonResponse(res, 409, { error: 'Timeslot already booked' });
+        }
+        return jsonResponse(res, 500, { error: 'Unable to save booking' });
+      }
+
+      return jsonResponse(res, 201, { id, date, time, customerName, phone, service });
+    }
+
+    return jsonResponse(res, 405, { error: 'Method not allowed' });
+  } catch (error) {
+    return handleError(res, error);
+  }
 };
