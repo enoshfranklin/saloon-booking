@@ -19,7 +19,12 @@ if (!connectionString) {
 const sslEnabled =
   process.env.DATABASE_SSL === 'true' ||
   /sslmode=(require|no-verify)/i.test(process.env.PGSSLMODE || '') ||
-  /sslmode=(require|no-verify)/i.test(connectionString);
+  /sslmode=(require|no-verify)/i.test(connectionString) ||
+  /ssl=true/i.test(connectionString);
+
+if (sslEnabled) {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 
 const pool = global.__booking_pool || new Pool({
   connectionString,
