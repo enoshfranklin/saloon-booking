@@ -9,7 +9,14 @@ function jsonResponse(res, status, payload) {
 
 function parseBody(req) {
   if (!req.body) return {};
-  return typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  if (typeof req.body === 'string') {
+    try {
+      return JSON.parse(req.body);
+    } catch (error) {
+      throw new Error('Invalid JSON body');
+    }
+  }
+  return req.body;
 }
 
 const { handleError } = require('../error');
@@ -33,7 +40,13 @@ module.exports = async (req, res) => {
     }
 
     if (method === 'POST') {
-      const { date, time, customerName, phone, service } = parseBody(req);
+      let body;
+      try {
+        body = parseBody(req);
+      } catch (error) {
+        return jsonResponse(res, 400, { error: error.message });
+      }
+      const { date, time, customerName, phone, service } = body;
       if (!date || !time || !customerName) {
         return jsonResponse(res, 400, { error: 'date, time, and customerName are required' });
       }

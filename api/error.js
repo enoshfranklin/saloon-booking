@@ -6,10 +6,8 @@ function jsonResponse(res, status, payload) {
 
 function handleError(res, error) {
   console.error(error);
-  if (error.message && error.message.includes('Database connection string is not configured')) {
-    return jsonResponse(res, 500, { error: error.message });
-  }
-  return jsonResponse(res, 500, { error: 'Internal server error' });
+  const message = error && error.message ? error.message : 'Internal server error';
+  return jsonResponse(res, 500, { error: message });
 }
 
 module.exports = { handleError };
