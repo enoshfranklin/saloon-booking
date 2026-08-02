@@ -108,7 +108,8 @@ button.secondary {
   color: #4338ca;
 }
 
-button.hidden {
+button.hidden,
+.hidden {
   display: none;
 }
 

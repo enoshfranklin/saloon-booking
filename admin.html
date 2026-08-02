@@ -20,6 +20,48 @@
           Admin token
           <input type="password" id="admin-token" placeholder="Enter admin token" />
         </label>
+        <label>
+          View bookings for date
+          <input type="date" id="booking-date" required />
+        </label>
+
+        <div id="edit-booking-card" class="edit-card hidden">
+          <h3>Edit booking</h3>
+          <form id="edit-booking-form">
+            <input type="hidden" id="edit-booking-id" />
+            <label>
+              Date
+              <input type="date" id="edit-booking-date" required />
+            </label>
+            <label>
+              Time
+              <input type="text" id="edit-booking-time" placeholder="9:00 AM" required />
+            </label>
+            <label>
+              Customer name
+              <input type="text" id="edit-customer-name" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" id="edit-customer-phone" />
+            </label>
+            <label>
+              Service
+              <select id="edit-service-type">
+                <option value="">None</option>
+                <option value="Haircut">Haircut</option>
+                <option value="Beard">Beard</option>
+                <option value="Haircut + Beard">Haircut + Beard</option>
+                <option value="Color">Color</option>
+                <option value="Style">Style</option>
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="secondary">Save changes</button>
+              <button type="button" id="cancel-edit" class="secondary">Cancel</button>
+            </div>
+          </form>
+        </div>
       </div>
 
       <div class="list-card">
