@@ -233,4 +233,28 @@ button.hidden,
   .booking-panel {
     grid-template-columns: 1fr;
   }
+
+  .form-card,
+  .list-card {
+    padding: 20px;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  button {
+    width: 100%;
+  }
+
+  label {
+    width: 100%;
+    min-width: 0;
+  }
+
+  input,
+  select {
+    min-width: 0;
+  }
 }
