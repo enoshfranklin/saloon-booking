@@ -9,6 +9,9 @@ const selectedDateLabel = document.getElementById('selected-date-label');
 const statusMessage = document.getElementById('status-message');
 const todayButton = document.getElementById('today-button');
 const saveButton = document.getElementById('save-button');
+const cancelCodeInput = document.getElementById('cancel-code');
+const cancelButton = document.getElementById('cancel-button');
+const cancelMessage = document.getElementById('cancel-message');
 
 const API_ROOT = '/api/bookings';
 const START_HOUR = 10;
@@ -78,9 +81,8 @@ function renderBookings(dateValue) {
     card.innerHTML = `
       <div class="booking-meta">
         <div>
-          <p><strong>${booking.time}</strong> · ${booking.customerName}</p>
-          <p>${booking.service || 'No service selected'}</p>
-          <p>${booking.phone || 'No phone provided'}</p>
+          <p><strong>${booking.time}</strong></p>
+          <p>${booking.service || 'Booked'}</p>
         </div>
       </div>
     `;
@@ -155,6 +157,30 @@ function conflictExists(booking) {
   return bookingsCache.some((existing) => existing.date === booking.date && existing.time === booking.time);
 }
 
+async function cancelBooking(bookingId) {
+  const response = await fetch(`${API_ROOT}/${bookingId}`, {
+    method: 'DELETE',
+    headers: {
+      'x-cancel-token': bookingId,
+    },
+  });
+
+  if (!response.ok && response.status !== 204) {
+    const payload = await parseJsonOrText(response);
+    throw new Error(payload.error || 'Unable to cancel booking');
+  }
+}
+
+function showCancelMessage(message) {
+  if (!cancelMessage) return;
+  cancelMessage.textContent = message;
+}
+
+function clearCancelMessage() {
+  if (!cancelMessage) return;
+  cancelMessage.textContent = '';
+}
+
 bookingForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -179,11 +205,34 @@ bookingForm.addEventListener('submit', async (event) => {
   }
 
   try {
-    await createBooking(booking);
+    const result = await createBooking(booking);
+    showStatus(`Booking created. Save this cancellation code: ${result.id}`);
     await loadBookings(dateValue);
     resetForm();
   } catch (error) {
     alert(error.message);
+  }
+});
+
+cancelButton.addEventListener('click', async () => {
+  clearStatus();
+  clearCancelMessage();
+
+  const bookingId = cancelCodeInput.value.trim();
+  if (!bookingId) {
+    showCancelMessage('Enter your cancellation code first.');
+    return;
+  }
+
+  try {
+    await cancelBooking(bookingId);
+    showCancelMessage('Booking canceled successfully.');
+    if (bookingDate.value) {
+      await loadBookings(bookingDate.value);
+    }
+    cancelCodeInput.value = '';
+  } catch (error) {
+    showCancelMessage(error.message);
   }
 });
 

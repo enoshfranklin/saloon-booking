@@ -28,6 +28,21 @@ module.exports = async (req, res) => {
     return jsonResponse(res, 400, { error: 'Missing booking id' });
   }
 
+  if (method === 'DELETE') {
+    const cancelToken = req.headers['x-cancel-token'];
+    if (!cancelToken || cancelToken !== id) {
+      if (!isAdmin(req)) {
+        return jsonResponse(res, 401, { error: 'Unauthorized' });
+      }
+    }
+
+    const result = await pool.query('DELETE FROM bookings WHERE id = $1', [id]);
+    if (result.rowCount === 0) {
+      return jsonResponse(res, 404, { error: 'Booking not found' });
+    }
+    return jsonResponse(res, 204, {});
+  }
+
   if (!isAdmin(req)) {
     return jsonResponse(res, 401, { error: 'Unauthorized' });
   }
@@ -61,14 +76,6 @@ module.exports = async (req, res) => {
       }
       return jsonResponse(res, 500, { error: 'Unable to update booking' });
     }
-  }
-
-  if (method === 'DELETE') {
-    const result = await pool.query('DELETE FROM bookings WHERE id = $1', [id]);
-    if (result.rowCount === 0) {
-      return jsonResponse(res, 404, { error: 'Booking not found' });
-    }
-    return jsonResponse(res, 204, {});
   }
 
   return jsonResponse(res, 405, { error: 'Method not allowed' });
