@@ -6,6 +6,7 @@ const customerPhone = document.getElementById('customer-phone');
 const serviceType = document.getElementById('service-type');
 const bookingsList = document.getElementById('bookings-list');
 const selectedDateLabel = document.getElementById('selected-date-label');
+const statusMessage = document.getElementById('status-message');
 const todayButton = document.getElementById('today-button');
 const saveButton = document.getElementById('save-button');
 
@@ -110,9 +111,29 @@ async function createBooking(booking) {
   return response.json();
 }
 
+function showStatus(message) {
+  if (!statusMessage) return;
+  statusMessage.textContent = message;
+}
+
+function clearStatus() {
+  if (!statusMessage) return;
+  statusMessage.textContent = '';
+}
+
 async function loadBookings(dateValue) {
-  bookingsCache = await fetchBookings(dateValue);
   renderTimeOptions(dateValue);
+  showStatus('Loading bookings...');
+
+  try {
+    bookingsCache = await fetchBookings(dateValue);
+    clearStatus();
+  } catch (error) {
+    console.warn('Unable to load bookings for', dateValue, error);
+    bookingsCache = [];
+    showStatus('Unable to load bookings from the server. Check your API or database connection.');
+  }
+
   renderBookings(dateValue);
 }
 
