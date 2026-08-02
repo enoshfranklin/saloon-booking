@@ -12,11 +12,14 @@ function parseBody(req) {
   return typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
 }
 
-module.exports = async (req, res) => {
-  await initDb();
-  const { method, query } = req;
+const { handleError } = require('./error');
 
-  if (method === 'GET') {
+module.exports = async (req, res) => {
+  try {
+    await initDb();
+    const { method, query } = req;
+
+    if (method === 'GET') {
     const date = query.date;
     if (!date) {
       return jsonResponse(res, 400, { error: 'Missing date query param' });
@@ -52,4 +55,7 @@ module.exports = async (req, res) => {
   }
 
   return jsonResponse(res, 405, { error: 'Method not allowed' });
+} catch (error) {
+  return handleError(res, error);
+}
 };
