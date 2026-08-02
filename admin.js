@@ -3,6 +3,7 @@ const selectedDateLabel = document.getElementById('selected-date-label');
 const todayButton = document.getElementById('today-button');
 const adminTokenInput = document.getElementById('admin-token');
 const bookingDate = document.getElementById('booking-date');
+const adminLoadButton = document.getElementById('admin-load-button');
 const adminStatus = document.getElementById('admin-status');
 const editBookingCard = document.getElementById('edit-booking-card');
 const editBookingForm = document.getElementById('edit-booking-form');
@@ -254,6 +255,15 @@ editBookingForm.addEventListener('submit', async (event) => {
   }
 });
 
+adminLoadButton.addEventListener('click', () => {
+  const dateValue = bookingDate.value;
+  if (!dateValue) {
+    displayAdminMessage('Select a date first.', true);
+    return;
+  }
+  loadBookings(dateValue);
+});
+
 todayButton.addEventListener('click', () => {
   const today = new Date().toISOString().slice(0, 10);
   bookingDate.value = today;
@@ -263,9 +273,5 @@ todayButton.addEventListener('click', () => {
 window.addEventListener('load', async () => {
   const today = new Date().toISOString().slice(0, 10);
   bookingDate.value = today;
-  if (getAdminToken()) {
-    await loadBookings(today);
-  } else {
-    displayAdminMessage('Enter your admin token to view bookings.', true);
-  }
+  displayAdminMessage('Enter your admin token and click Load bookings.', false);
 });
