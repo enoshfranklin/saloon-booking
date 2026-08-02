@@ -11,9 +11,11 @@ const todayButton = document.getElementById('today-button');
 const saveButton = document.getElementById('save-button');
 
 const API_ROOT = '/api/bookings';
-const START_TIME = 9;
-const END_TIME = 18;
-const STEP_MINUTES = 30;
+const START_HOUR = 10;
+const START_MINUTE = 30;
+const END_HOUR = 17;
+const END_MINUTE = 30;
+const SLOT_LENGTH_MINUTES = 45;
 let bookingsCache = [];
 
 function formatDate(date) {
@@ -23,14 +25,16 @@ function formatDate(date) {
 function timeSlotsForDate(dateValue) {
   const slots = [];
   const [year, month, day] = dateValue.split('-').map(Number);
-  for (let hour = START_TIME; hour <= END_TIME; hour++) {
-    for (let minute = 0; minute < 60; minute += STEP_MINUTES) {
-      if (hour === END_TIME && minute > 0) continue;
-      const date = new Date(year, month - 1, day, hour, minute);
-      const label = date.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-      slots.push({ value: label, label });
-    }
+  const start = new Date(year, month - 1, day, START_HOUR, START_MINUTE);
+  const end = new Date(year, month - 1, day, END_HOUR, END_MINUTE);
+  let current = new Date(start);
+
+  while (current <= end) {
+    const label = current.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    slots.push({ value: label, label });
+    current = new Date(current.getTime() + SLOT_LENGTH_MINUTES * 60000);
   }
+
   return slots;
 }
 
