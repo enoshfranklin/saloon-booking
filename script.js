@@ -13,6 +13,7 @@ const cancelCodeInput = document.getElementById('cancel-code');
 const cancelButton = document.getElementById('cancel-button');
 const copyCodeButton = document.getElementById('copy-code-button');
 const cancelMessage = document.getElementById('cancel-message');
+const cancelCard = document.getElementById('cancel-card');
 
 const API_ROOT = '/api/bookings';
 const START_HOUR = 10;
@@ -182,6 +183,16 @@ function clearCancelMessage() {
   cancelMessage.textContent = '';
 }
 
+function showCancelCard() {
+  if (!cancelCard) return;
+  cancelCard.classList.remove('hidden');
+}
+
+function hideCancelCard() {
+  if (!cancelCard) return;
+  cancelCard.classList.add('hidden');
+}
+
 bookingForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -208,7 +219,8 @@ bookingForm.addEventListener('submit', async (event) => {
   try {
     const result = await createBooking(booking);
     cancelCodeInput.value = result.id;
-    showStatus('Booking created. Your cancellation code is ready to copy.');
+    showCancelCard();
+    showStatus('Booking created. Copy your cancellation code immediately.');
     await loadBookings(dateValue);
     resetForm();
   } catch (error) {
@@ -233,6 +245,7 @@ cancelButton.addEventListener('click', async () => {
       await loadBookings(bookingDate.value);
     }
     cancelCodeInput.value = '';
+    hideCancelCard();
   } catch (error) {
     showCancelMessage(error.message);
   }
@@ -267,6 +280,8 @@ bookingDate.addEventListener('change', async () => {
 });
 
 window.addEventListener('load', async () => {
+  hideCancelCard();
+  cancelCodeInput.value = '';
   const today = new Date().toISOString().slice(0, 10);
   bookingDate.value = today;
   await loadBookings(today);

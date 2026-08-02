@@ -170,6 +170,13 @@ button#save-button {
   flex-shrink: 0;
 }
 
+.cancel-note {
+  margin: 12px 0 0;
+  color: #fcd34d;
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
 .hidden {
   display: none;
 }
