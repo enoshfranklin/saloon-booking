@@ -41,6 +41,37 @@ function formatTimeLabel(date) {
   return `${displayHour}:${String(minutes).padStart(2, '0')} ${suffix}`;
 }
 
+function parseTimeToMinutes(value) {
+  if (!value || typeof value !== 'string') {
+    return null;
+  }
+
+  const normalized = value.trim().replace(/\u00A0|\u202F/g, ' ');
+  const amPmMatch = normalized.match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (amPmMatch) {
+    let hour = Number(amPmMatch[1]);
+    const minute = Number(amPmMatch[2]);
+    const ampm = amPmMatch[3].toUpperCase();
+
+    if (ampm === 'PM' && hour !== 12) hour += 12;
+    if (ampm === 'AM' && hour === 12) hour = 0;
+
+    return hour * 60 + minute;
+  }
+
+  const plainMatch = normalized.match(/^(\d{1,2}):(\d{2})$/);
+  if (plainMatch) {
+    const hour = Number(plainMatch[1]);
+    const minute = Number(plainMatch[2]);
+    if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+      return null;
+    }
+    return hour * 60 + minute;
+  }
+
+  return null;
+}
+
 function timeSlotsForDate(dateValue) {
   // Generate slots exactly as defined in ALLOWED_SLOT_MINUTES for the given date
   const slots = [];
@@ -59,8 +90,10 @@ function timeSlotsForDate(dateValue) {
   return slots;
 }
 
-function getBookedSlots() {
-  return bookingsCache.map((booking) => booking.time);
+function getBookedSlotMinutes() {
+  return bookingsCache
+    .map((booking) => parseTimeToMinutes(booking.time))
+    .filter((minutes) => minutes !== null);
 }
 
 function selectBookingTime(value) {
@@ -86,9 +119,9 @@ function renderTimeOptions(dateValue) {
   bookingTimePicker.innerHTML = '';
   bookingTime.value = '';
 
-  const bookedSlots = getBookedSlots();
+  const bookedSlotMinutes = getBookedSlotMinutes();
   const slots = timeSlotsForDate(dateValue);
-  const availableSlots = slots.filter((slot) => !bookedSlots.includes(slot.value));
+  const availableSlots = slots.filter((slot) => !bookedSlotMinutes.includes(slot.minutes));
 
   // Single, chronological presentation — no Morning/Afternoon/Evening headings
   const header = document.createElement('div');
