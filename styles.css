@@ -1169,18 +1169,29 @@ button:focus-visible {
 
 @media (max-width: 600px) {
   .container {
-    padding-top: 8px;
-    padding-bottom: 54px;
+    padding-top: 4px;
+    padding-bottom: 48px;
   }
 
   .page-header {
-    margin-bottom: 8px;
+    margin-bottom: 6px;
   }
 
   .header-web {
-    width: 90px;
-    height: 90px;
-    margin-bottom: 8px;
+    width: 78px;
+    height: 78px;
+    margin-bottom: 6px;
+  }
+
+  h1 {
+    font-size: 28px;
+    letter-spacing: 1.4px;
+  }
+
+  header p {
+    margin-top: 6px;
+    font-size: 10px;
+    letter-spacing: 1.1px;
   }
 
   .form-card,
