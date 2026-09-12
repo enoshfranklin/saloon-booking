@@ -16,9 +16,65 @@ const editServiceType = document.getElementById('edit-service-type');
 const cancelEditButton = document.getElementById('cancel-edit');
 
 const API_ROOT = '/api/bookings';
+const SALON_NAME = 'Salon Booking';
 
 function formatDate(date) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function normalizeWhatsAppPhone(phone) {
+  if (!phone) return '';
+
+  const digits = phone
+    .replace(/\s+/g, '')
+    .replace(/[+()\-\[\]]/g, '')
+    .replace(/[^\d]/g, '');
+
+  if (!digits) return '';
+
+  if (digits.startsWith('91') && digits.length > 10) {
+    return digits;
+  }
+
+  if (digits.length === 10) {
+    return `91${digits}`;
+  }
+
+  return digits;
+}
+
+function buildCancellationMessage(booking) {
+  const customerName = booking.customerName || 'Customer';
+  const serviceName = booking.service || 'Service';
+  const dateValue = booking.date ? formatDate(new Date(`${booking.date}T00:00:00`)) : 'Date';
+  const timeValue = booking.time || 'Time';
+  const message = [
+    `Hi ${customerName},`,
+    '',
+    `Your booking at ${SALON_NAME} has been cancelled.`,
+    '',
+    'Booking details:',
+    `Service: ${serviceName}`,
+    `Date: ${dateValue}`,
+    `Time: ${timeValue}`,
+    '',
+    'We apologize for the inconvenience. Please contact us if you would like to reschedule.',
+    '',
+    'Thank you,',
+    SALON_NAME,
+  ].join('\n');
+
+  return encodeURIComponent(message);
+}
+
+function buildWhatsAppLink(booking) {
+  const normalized = normalizeWhatsAppPhone(booking.phone);
+  if (!normalized) {
+    return null;
+  }
+
+  const message = buildCancellationMessage(booking);
+  return `https://wa.me/${normalized}?text=${message}`;
 }
 
 let currentDate = null;
@@ -138,6 +194,15 @@ function renderBookings(bookings, dateValue) {
 
   bookings.forEach((booking) => {
     const card = document.createElement('article');
+    const status = (booking.status || 'pending').toLowerCase();
+    const whatsappLink = buildWhatsAppLink(booking);
+    const isCancelled = status === 'cancelled';
+    const editButton = isCancelled ? '' : `<button class="edit" data-id="${booking.id}">Edit</button>`;
+    const cancelButton = isCancelled ? '' : `<button class="delete" data-id="${booking.id}">Cancel Booking</button>`;
+    const whatsappButton = whatsappLink
+      ? `<button class="whatsapp" data-id="${booking.id}">Notify on WhatsApp</button>`
+      : '<p class="whatsapp-helper">Customer phone number is not available.</p>';
+
     card.className = 'booking-card';
     card.dataset.id = booking.id;
     card.dataset.date = booking.date;
@@ -145,6 +210,7 @@ function renderBookings(bookings, dateValue) {
     card.dataset.customerName = booking.customerName || '';
     card.dataset.phone = booking.phone || '';
     card.dataset.service = booking.service || '';
+    card.dataset.status = status;
     card.innerHTML = `
       <div class="booking-meta">
         <div>
@@ -153,10 +219,19 @@ function renderBookings(bookings, dateValue) {
           <p>${booking.phone || 'No phone provided'}</p>
         </div>
       </div>
-      <div class="booking-actions">
-        <button class="edit" data-id="${booking.id}">Edit</button>
-        <button class="delete" data-id="${booking.id}">Cancel</button>
+      <div class="booking-status-row">
+        <span class="status-badge ${isCancelled ? 'cancelled' : 'active'}">${isCancelled ? 'Cancelled' : 'Active'}</span>
       </div>
+      <div class="booking-actions">
+        ${editButton}
+        ${cancelButton}
+      </div>
+      ${isCancelled ? `
+        <div class="whatsapp-message-panel">
+          ${whatsappButton}
+          <p class="whatsapp-helper">WhatsApp message ready — press Send to notify the customer.</p>
+        </div>
+      ` : ''}
     `;
     bookingsList.appendChild(card);
   });
@@ -200,12 +275,42 @@ document.addEventListener('click', async (event) => {
   if (!bookingId) return;
 
   if (target.classList.contains('delete')) {
+    const bookingCard = target.closest('.booking-card');
+    const customerName = bookingCard?.dataset.customerName || 'this customer';
+    const confirmed = window.confirm(`Cancel the booking for ${customerName}?`);
+    if (!confirmed) return;
+
     try {
       await deleteBooking(bookingId);
+      displayAdminMessage('Booking cancelled successfully.', false);
       await loadBookings(currentDate || new Date().toISOString().slice(0, 10));
     } catch (error) {
       alert(error.message);
     }
+    return;
+  }
+
+  if (target.classList.contains('whatsapp')) {
+    const bookingCard = target.closest('.booking-card');
+    if (!bookingCard) return;
+
+    const booking = {
+      id: bookingId,
+      date: bookingCard.dataset.date,
+      time: bookingCard.dataset.time,
+      customerName: bookingCard.dataset.customerName,
+      phone: bookingCard.dataset.phone,
+      service: bookingCard.dataset.service,
+    };
+
+    const link = buildWhatsAppLink(booking);
+    if (!link) {
+      alert('Customer phone number is not available.');
+      return;
+    }
+
+    window.open(link, '_blank', 'noopener,noreferrer');
+    displayAdminMessage('WhatsApp message ready — press Send to notify the customer.', false);
     return;
   }
 

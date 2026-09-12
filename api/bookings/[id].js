@@ -29,18 +29,29 @@ module.exports = async (req, res) => {
   }
 
   if (method === 'DELETE') {
-    const cancelToken = req.headers['x-cancel-token'];
-    if (!cancelToken || cancelToken !== id) {
-      if (!isAdmin(req)) {
-        return jsonResponse(res, 401, { error: 'Unauthorized' });
-      }
+    if (!isAdmin(req)) {
+      return jsonResponse(res, 401, { error: 'Unauthorized' });
     }
 
-    const result = await pool.query('DELETE FROM bookings WHERE id = $1', [id]);
-    if (result.rowCount === 0) {
+    const existing = await pool.query(
+      "SELECT id, COALESCE(status, 'pending') AS status FROM bookings WHERE id = $1",
+      [id]
+    );
+
+    if (existing.rowCount === 0) {
       return jsonResponse(res, 404, { error: 'Booking not found' });
     }
-    return jsonResponse(res, 204, {});
+
+    if (existing.rows[0].status === 'cancelled') {
+      return jsonResponse(res, 409, { error: 'Booking already cancelled' });
+    }
+
+    const result = await pool.query(
+      "UPDATE bookings SET status = 'cancelled' WHERE id = $1 RETURNING id, date, time, customer_name AS \"customerName\", phone, service, COALESCE(status, 'pending') AS status",
+      [id]
+    );
+
+    return jsonResponse(res, 200, result.rows[0]);
   }
 
   if (!isAdmin(req)) {

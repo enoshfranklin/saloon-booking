@@ -33,7 +33,7 @@ module.exports = async (req, res) => {
       }
 
       const result = await pool.query(
-        'SELECT id, date, time FROM bookings WHERE date = $1 ORDER BY time ASC',
+        "SELECT id, date, time FROM bookings WHERE date = $1 AND COALESCE(status, 'pending') <> 'cancelled' ORDER BY time ASC",
         [date]
       );
       return jsonResponse(res, 200, result.rows);

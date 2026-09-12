@@ -229,6 +229,52 @@ button#save-button {
   color: white;
 }
 
+.booking-status-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.status-badge.active {
+  background: rgba(34,197,94,.16);
+  color: #bbf7d0;
+}
+
+.status-badge.cancelled {
+  background: rgba(239,68,68,.16);
+  color: #fecaca;
+}
+
+.whatsapp-message-panel {
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(148,163,184,.2);
+}
+
+.whatsapp-helper {
+  margin: 8px 0 0;
+  color: #dbeafe;
+  font-size: 0.92rem;
+}
+
+.whatsapp {
+  background: #25d366;
+  color: #052e16;
+  width: 100%;
+}
+
 .status-message {
   margin-top: 18px;
   padding: 14px;

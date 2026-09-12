@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     }
 
     const result = await pool.query(
-      'SELECT id, date, time, customer_name AS "customerName", phone, service FROM bookings WHERE date = $1 ORDER BY time ASC',
+      "SELECT id, date, time, customer_name AS \"customerName\", phone, service, COALESCE(status, 'pending') AS status FROM bookings WHERE date = $1 ORDER BY time ASC",
       [date]
     );
 
