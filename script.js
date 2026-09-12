@@ -44,6 +44,14 @@ function getBookedSlots() {
 
 function renderTimeOptions(dateValue) {
   bookingTime.innerHTML = '';
+
+  const placeholder = document.createElement('option');
+  placeholder.value = '';
+  placeholder.textContent = 'Select a time';
+  placeholder.disabled = true;
+  placeholder.selected = true;
+  bookingTime.appendChild(placeholder);
+
   const bookedSlots = getBookedSlots();
   const slots = timeSlotsForDate(dateValue);
   const availableSlots = slots.filter((slot) => !bookedSlots.includes(slot.value));
@@ -53,7 +61,6 @@ function renderTimeOptions(dateValue) {
     option.value = '';
     option.textContent = 'No appointments available for this date.';
     option.disabled = true;
-    option.selected = true;
     bookingTime.appendChild(option);
     return;
   }

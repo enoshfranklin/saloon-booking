@@ -191,9 +191,11 @@ header p {
 
 .booking-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+  grid-template-columns: minmax(0, 1fr);
   gap: 26px;
   align-items: start;
+  max-width: 760px;
+  margin: 0 auto;
 }
 
 .form-card,
