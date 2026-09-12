@@ -11,9 +11,32 @@
     <div class="web-orbit web-orbit-one"></div>
     <div class="web-orbit web-orbit-two"></div>
     <div class="spider"><span class="spider-body"></span></div>
+    <div class="web-emoji">🕸️</div>
   </div>
   <main class="container app-shell">
     <header class="page-header">
+      <div class="header-web" aria-hidden="true">
+        <svg viewBox="0 0 200 200" role="presentation" aria-hidden="true">
+          <defs>
+            <radialGradient id="webGlow" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="rgba(220,20,60,0.65)"/>
+              <stop offset="100%" stop-color="rgba(65,105,225,0.2)"/>
+            </radialGradient>
+          </defs>
+          <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+          <circle cx="100" cy="100" r="46" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+          <circle cx="100" cy="100" r="24" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+          <g stroke="rgba(255,255,255,0.22)" stroke-width="1">
+            <line x1="100" y1="20" x2="100" y2="180"/>
+            <line x1="30" y1="100" x2="170" y2="100"/>
+            <line x1="48" y1="48" x2="152" y2="152"/>
+            <line x1="152" y1="48" x2="48" y2="152"/>
+            <line x1="20" y1="70" x2="180" y2="130"/>
+            <line x1="20" y1="130" x2="180" y2="70"/>
+          </g>
+          <circle cx="100" cy="100" r="10" fill="url(#webGlow)" opacity="0.8"/>
+        </svg>
+      </div>
       <h1>Book an appointment</h1>
       <p>Choose a service, pick a date, and select an available time.</p>
     </header>
