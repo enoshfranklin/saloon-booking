@@ -7,34 +7,40 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body class="theme-spider">
-  <div class="web-background" aria-hidden="true"></div>
+  <div class="web-background" aria-hidden="true">
+    <div class="web-orbit web-orbit-one"></div>
+    <div class="web-orbit web-orbit-two"></div>
+    <div class="spider"><span class="spider-body"></span></div>
+  </div>
   <main class="container app-shell">
     <header class="page-header">
-      <div class="brand-pill">The Red Room</div>
-      <h1>Salon Booking</h1>
-      <p>Book your makeover, swing into an open slot, and lock in your next appointment.</p>
+      <h1>Book an appointment</h1>
+      <p>Choose a service, pick a date, and select an available time.</p>
     </header>
-
-    <div class="booking-steps" aria-label="Booking progress">
-      <span class="step active">Service</span>
-      <span class="step">Date</span>
-      <span class="step">Time</span>
-      <span class="step">Confirm</span>
-    </div>
 
     <section class="booking-panel">
       <div class="form-card">
         <h2>New Booking</h2>
         <form id="booking-form">
-          <label>
-            Date
-            <input type="date" id="booking-date" required />
-          </label>
+          <div class="date-row">
+            <label class="date-field">
+              <span class="field-label-row">
+                <span>Date</span>
+              </span>
+              <div class="date-surface">
+                <input type="date" id="booking-date" required />
+              </div>
+            </label>
+            <button type="button" id="today-button" class="secondary compact-button">Today</button>
+          </div>
 
-          <label>
-            Time slot
-            <select id="booking-time" required></select>
-          </label>
+          <div class="time-selector">
+            <div class="field-label-row">
+              <span>Time slot</span>
+            </div>
+            <div id="booking-time-picker" class="time-picker" aria-live="polite"></div>
+            <input type="hidden" id="booking-time" name="booking-time" required />
+          </div>
 
           <label>
             Customer name
@@ -63,6 +69,7 @@
           </div>
         </form>
 
+        <div id="status-message" class="status-message" aria-live="polite"></div>
       </div>
 
     </section>

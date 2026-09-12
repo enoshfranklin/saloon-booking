@@ -1,6 +1,33 @@
 const { pool, initDb } = require('../db');
 const { isAdmin } = require('../auth');
 
+// Allowed slot minutes since midnight (same schedule as frontend)
+const ALLOWED_SLOT_MINUTES = new Set([
+  10 * 60 + 30,
+  11 * 60 + 15,
+  12 * 60 + 0,
+  12 * 60 + 45,
+  14 * 60 + 30,
+  15 * 60 + 15,
+  16 * 60 + 0,
+  16 * 60 + 45,
+  17 * 60 + 30,
+  18 * 60 + 15,
+  19 * 60 + 0,
+]);
+
+function parseTimeLabelToMinutes(label) {
+  if (!label || typeof label !== 'string') return null;
+  const m = label.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!m) return null;
+  let hour = Number(m[1]);
+  const minute = Number(m[2]);
+  const ampm = m[3].toUpperCase();
+  if (ampm === 'PM' && hour !== 12) hour += 12;
+  if (ampm === 'AM' && hour === 12) hour = 0;
+  return hour * 60 + minute;
+}
+
 function jsonResponse(res, status, payload) {
   res.statusCode = status;
   res.setHeader('Content-Type', 'application/json');
@@ -68,6 +95,12 @@ module.exports = async (req, res) => {
     const { date, time, customerName, phone, service } = body;
     if (!date || !time || !customerName) {
       return jsonResponse(res, 400, { error: 'date, time, and customerName are required' });
+    }
+
+    // Validate time slot
+    const minutes = parseTimeLabelToMinutes(time);
+    if (minutes === null || !ALLOWED_SLOT_MINUTES.has(minutes)) {
+      return jsonResponse(res, 400, { error: 'Invalid or unavailable time slot' });
     }
 
     try {

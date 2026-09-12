@@ -1,6 +1,7 @@
 const bookingForm = document.getElementById('booking-form');
 const bookingDate = document.getElementById('booking-date');
 const bookingTime = document.getElementById('booking-time');
+const bookingTimePicker = document.getElementById('booking-time-picker');
 const customerName = document.getElementById('customer-name');
 const customerPhone = document.getElementById('customer-phone');
 const serviceType = document.getElementById('service-type');
@@ -11,11 +12,21 @@ const todayButton = document.getElementById('today-button');
 const saveButton = document.getElementById('save-button');
 
 const API_ROOT = '/api/bookings';
-const START_HOUR = 10;
-const START_MINUTE = 30;
-const END_HOUR = 17;
-const END_MINUTE = 30;
 const SLOT_LENGTH_MINUTES = 45;
+// Allowed slot definitions (minutes since midnight)
+const ALLOWED_SLOT_MINUTES = [
+  10 * 60 + 30,
+  11 * 60 + 15,
+  12 * 60 + 0,
+  12 * 60 + 45,
+  14 * 60 + 30,
+  15 * 60 + 15,
+  16 * 60 + 0,
+  16 * 60 + 45,
+  17 * 60 + 30,
+  18 * 60 + 15,
+  19 * 60 + 0,
+];
 let bookingsCache = [];
 
 function formatDate(date) {
@@ -23,18 +34,20 @@ function formatDate(date) {
 }
 
 function timeSlotsForDate(dateValue) {
+  // Generate slots exactly as defined in ALLOWED_SLOT_MINUTES for the given date
   const slots = [];
   const [year, month, day] = dateValue.split('-').map(Number);
-  const start = new Date(year, month - 1, day, START_HOUR, START_MINUTE);
-  const end = new Date(year, month - 1, day, END_HOUR, END_MINUTE);
-  let current = new Date(start);
 
-  while (current <= end) {
-    const label = current.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-    slots.push({ value: label, label });
-    current = new Date(current.getTime() + SLOT_LENGTH_MINUTES * 60000);
-  }
+  ALLOWED_SLOT_MINUTES.forEach((minutes) => {
+    const hours = Math.floor(minutes / 60);
+    const mins = minutes % 60;
+    const dt = new Date(year, month - 1, day, hours, mins);
+    const label = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    slots.push({ value: label, label, minutes });
+  });
 
+  // Ensure chronological order
+  slots.sort((a, b) => a.minutes - b.minutes);
   return slots;
 }
 
@@ -42,35 +55,77 @@ function getBookedSlots() {
   return bookingsCache.map((booking) => booking.time);
 }
 
-function renderTimeOptions(dateValue) {
-  bookingTime.innerHTML = '';
+function selectBookingTime(value) {
+  bookingTime.value = value;
 
-  const placeholder = document.createElement('option');
-  placeholder.value = '';
-  placeholder.textContent = 'Select a time';
-  placeholder.disabled = true;
-  placeholder.selected = true;
-  bookingTime.appendChild(placeholder);
+  if (!bookingTimePicker) {
+    return;
+  }
+
+  const allButtons = bookingTimePicker.querySelectorAll('.time-slot-button');
+  allButtons.forEach((button) => {
+    const isSelected = button.dataset.time === value;
+    button.classList.toggle('selected', isSelected);
+    button.setAttribute('aria-pressed', String(isSelected));
+  });
+}
+
+function renderTimeOptions(dateValue) {
+  if (!bookingTimePicker) {
+    return;
+  }
+
+  bookingTimePicker.innerHTML = '';
+  bookingTime.value = '';
 
   const bookedSlots = getBookedSlots();
   const slots = timeSlotsForDate(dateValue);
   const availableSlots = slots.filter((slot) => !bookedSlots.includes(slot.value));
 
-  if (availableSlots.length === 0) {
-    const option = document.createElement('option');
-    option.value = '';
-    option.textContent = 'No appointments available for this date.';
-    option.disabled = true;
-    bookingTime.appendChild(option);
-    return;
+  // Single, chronological presentation — no Morning/Afternoon/Evening headings
+  const header = document.createElement('div');
+  header.className = 'time-group-header';
+  header.textContent = 'Available Times';
+  bookingTimePicker.appendChild(header);
+
+  let grid = document.createElement('div');
+  grid.className = 'time-grid';
+
+  // Render slots; insert a subtle spacer where the lunch break exists (between 12:45 and 14:30)
+  availableSlots.forEach((slot, idx) => {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'time-slot-button';
+    button.dataset.time = slot.value;
+    button.textContent = slot.label;
+    button.addEventListener('click', () => selectBookingTime(slot.value));
+    grid.appendChild(button);
+
+    // After the 12:45 slot, insert a break spacer
+    const isLunchEnd = slot.minutes === 12 * 60 + 45;
+    if (isLunchEnd) {
+      bookingTimePicker.appendChild(grid);
+      const spacer = document.createElement('div');
+      spacer.className = 'time-break';
+      spacer.innerHTML = `<span></span><small></small>`;
+      bookingTimePicker.appendChild(spacer);
+      // create a new grid for afternoon slots
+      grid = document.createElement('div');
+      grid.className = 'time-grid';
+    }
+  });
+
+  // Append the final grid (if it hasn't been appended yet)
+  if (!bookingTimePicker.contains(grid)) {
+    bookingTimePicker.appendChild(grid);
   }
 
-  availableSlots.forEach((slot) => {
-    const option = document.createElement('option');
-    option.value = slot.value;
-    option.textContent = slot.label;
-    bookingTime.appendChild(option);
-  });
+  if (availableSlots.length === 0) {
+    const emptyState = document.createElement('div');
+    emptyState.className = 'time-empty';
+    emptyState.textContent = 'No appointments available for this date.';
+    bookingTimePicker.appendChild(emptyState);
+  }
 }
 
 function renderBookings(dateValue) {
@@ -92,7 +147,10 @@ function renderBookings(dateValue) {
 
 function resetForm() {
   bookingForm.reset();
-  renderTimeOptions(bookingDate.value);
+  bookingTime.value = '';
+  if (bookingTimePicker) {
+    renderTimeOptions(bookingDate.value);
+  }
 }
 
 async function parseJsonOrText(response) {
@@ -202,11 +260,13 @@ bookingForm.addEventListener('submit', async (event) => {
   }
 });
 
-todayButton.addEventListener('click', () => {
-  const today = new Date().toISOString().slice(0, 10);
-  bookingDate.value = today;
-  loadBookings(today);
-});
+if (todayButton) {
+  todayButton.addEventListener('click', () => {
+    const today = new Date().toISOString().slice(0, 10);
+    bookingDate.value = today;
+    loadBookings(today);
+  });
+}
 
 bookingDate.addEventListener('change', async () => {
   const value = bookingDate.value;
