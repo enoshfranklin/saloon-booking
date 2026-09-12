@@ -185,9 +185,9 @@ body::before {
 }
 
 .header-web {
-  width: 150px;
-  height: 150px;
-  margin: 0 auto 18px;
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 10px;
   opacity: 0.15;
   animation: webFloat 8s ease-in-out infinite;
 }
@@ -201,7 +201,7 @@ body::before {
 .container {
   width: var(--container);
   margin: 0 auto;
-  padding: 58px 0 72px;
+  padding: 12px 0 72px;
   position: relative;
   z-index: 1;
 }
@@ -212,7 +212,7 @@ body::before {
 
 .page-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
   position: relative;
   animation: slideDown 0.8s ease-out both;
 }
@@ -229,7 +229,7 @@ h1 {
 }
 
 header p {
-  margin: 14px auto 0;
+  margin: 8px auto 0;
   max-width: 720px;
   font-size: 13px;
   line-height: 1.7;
@@ -660,23 +660,24 @@ button:focus-visible {
 
 .success-shell {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
   min-height: 100vh;
-  padding-top: 40px;
-  padding-bottom: 60px;
+  padding-top: 18px;
+  padding-bottom: 40px;
 }
 
 .success-panel {
   max-width: 620px;
   width: 100%;
   position: relative;
+  margin-top: 0;
 }
 
 .success-scene {
   position: relative;
-  height: 180px;
-  margin-bottom: 10px;
+  height: 150px;
+  margin-bottom: 0;
   overflow: hidden;
   border-radius: 18px 18px 0 0;
   background: linear-gradient(180deg, rgba(220, 20, 60, 0.08), rgba(78, 110, 242, 0.02));
