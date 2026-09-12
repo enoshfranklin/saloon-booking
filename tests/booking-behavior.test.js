@@ -21,6 +21,12 @@ test('public booking page removes stray Red Room branding', () => {
   assert.doesNotMatch(html, /Red Room|RedRoom|red room/i);
 });
 
+test('public booking times use a fixed, parseable format', () => {
+  const script = read('script.js');
+  assert.match(script, /formatTimeLabel|String\(minutes\)\.padStart\(2, '0'\)/i);
+  assert.doesNotMatch(script, /toLocaleTimeString\(\[\], \{ hour: 'numeric', minute: '2-digit' \}\)/i);
+});
+
 test('booking success redirects after a successful save', () => {
   const script = read('script.js');
   assert.match(script, /booking-success\.html|window\.location\.|redirect/i);

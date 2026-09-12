@@ -33,6 +33,14 @@ function formatDate(date) {
   return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
+function formatTimeLabel(date) {
+  const hours = date.getHours();
+  const minutes = date.getMinutes();
+  const suffix = hours >= 12 ? 'PM' : 'AM';
+  const displayHour = ((hours + 11) % 12) + 1;
+  return `${displayHour}:${String(minutes).padStart(2, '0')} ${suffix}`;
+}
+
 function timeSlotsForDate(dateValue) {
   // Generate slots exactly as defined in ALLOWED_SLOT_MINUTES for the given date
   const slots = [];
@@ -42,7 +50,7 @@ function timeSlotsForDate(dateValue) {
     const hours = Math.floor(minutes / 60);
     const mins = minutes % 60;
     const dt = new Date(year, month - 1, day, hours, mins);
-    const label = dt.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    const label = formatTimeLabel(dt);
     slots.push({ value: label, label, minutes });
   });
 

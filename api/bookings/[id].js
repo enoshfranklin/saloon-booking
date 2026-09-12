@@ -18,13 +18,22 @@ const ALLOWED_SLOT_MINUTES = new Set([
 
 function parseTimeLabelToMinutes(label) {
   if (!label || typeof label !== 'string') return null;
-  const m = label.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+
+  const normalized = label.trim().replace(/\u00A0|\u202F/g, ' ');
+  const m = normalized.match(/^(\d{1,2}):(\d{2})(?:\s*(AM|PM))?$/i);
   if (!m) return null;
+
   let hour = Number(m[1]);
   const minute = Number(m[2]);
-  const ampm = m[3].toUpperCase();
-  if (ampm === 'PM' && hour !== 12) hour += 12;
-  if (ampm === 'AM' && hour === 12) hour = 0;
+  const ampm = (m[3] || '').toUpperCase();
+
+  if (ampm) {
+    if (ampm === 'PM' && hour !== 12) hour += 12;
+    if (ampm === 'AM' && hour === 12) hour = 0;
+  } else if (hour < 0 || hour > 23 || minute < 0 || minute > 59) {
+    return null;
+  }
+
   return hour * 60 + minute;
 }
 
