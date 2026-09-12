@@ -1169,8 +1169,18 @@ button:focus-visible {
 
 @media (max-width: 600px) {
   .container {
-    padding-top: 32px;
+    padding-top: 8px;
     padding-bottom: 54px;
+  }
+
+  .page-header {
+    margin-bottom: 8px;
+  }
+
+  .header-web {
+    width: 90px;
+    height: 90px;
+    margin-bottom: 8px;
   }
 
   .form-card,
