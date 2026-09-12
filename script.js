@@ -74,7 +74,7 @@ function renderBookings(dateValue) {
     return;
   }
 
-  bookingsList.innerHTML = '<div class="no-bookings">Available appointments are shown in the time selector above.</div>';
+  bookingsList.innerHTML = '';
 }
 
 function resetForm() {
