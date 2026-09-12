@@ -67,7 +67,13 @@ function renderTimeOptions(dateValue) {
 }
 
 function renderBookings(dateValue) {
-  selectedDateLabel.textContent = formatDate(new Date(dateValue));
+  if (selectedDateLabel) {
+    selectedDateLabel.textContent = formatDate(new Date(dateValue));
+  }
+
+  if (!bookingsList) {
+    return;
+  }
 
   if (bookingsCache.length === 0) {
     bookingsList.innerHTML = '<div class="no-bookings">No appointments available for this date.</div>';
