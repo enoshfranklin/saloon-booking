@@ -59,8 +59,23 @@ async function initDb() {
   `);
 
   await pool.query(`
-    CREATE UNIQUE INDEX IF NOT EXISTS bookings_date_time_unique
-    ON bookings (date, time);
+    DO $$
+    BEGIN
+      IF EXISTS (
+        SELECT 1
+        FROM pg_indexes
+        WHERE schemaname = current_schema()
+          AND indexname = 'bookings_date_time_unique'
+      ) THEN
+        EXECUTE 'DROP INDEX bookings_date_time_unique';
+      END IF;
+    END $$;
+  `);
+
+  await pool.query(`
+    CREATE UNIQUE INDEX IF NOT EXISTS bookings_date_time_unique_active
+    ON bookings (date, time)
+    WHERE COALESCE(status, 'pending') IN ('pending', 'confirmed');
   `);
 }
 

@@ -46,17 +46,22 @@ function renderTimeOptions(dateValue) {
   bookingTime.innerHTML = '';
   const bookedSlots = getBookedSlots();
   const slots = timeSlotsForDate(dateValue);
+  const availableSlots = slots.filter((slot) => !bookedSlots.includes(slot.value));
 
-  slots.forEach((slot) => {
+  if (availableSlots.length === 0) {
+    const option = document.createElement('option');
+    option.value = '';
+    option.textContent = 'No appointments available for this date.';
+    option.disabled = true;
+    option.selected = true;
+    bookingTime.appendChild(option);
+    return;
+  }
+
+  availableSlots.forEach((slot) => {
     const option = document.createElement('option');
     option.value = slot.value;
     option.textContent = slot.label;
-
-    if (bookedSlots.includes(slot.value)) {
-      option.disabled = true;
-      option.textContent += ' — Booked';
-    }
-
     bookingTime.appendChild(option);
   });
 }
@@ -65,27 +70,11 @@ function renderBookings(dateValue) {
   selectedDateLabel.textContent = formatDate(new Date(dateValue));
 
   if (bookingsCache.length === 0) {
-    bookingsList.innerHTML = '<div class="no-bookings">No bookings yet. Save a new appointment for this date.</div>';
+    bookingsList.innerHTML = '<div class="no-bookings">No appointments available for this date.</div>';
     return;
   }
 
-  bookingsList.innerHTML = '';
-  const sorted = [...bookingsCache].sort((a, b) => a.time.localeCompare(b.time));
-
-  sorted.forEach((booking) => {
-    const card = document.createElement('article');
-    card.className = 'booking-card';
-    card.innerHTML = `
-      <div class="booking-meta">
-        <div>
-          <p><strong>${booking.time}</strong></p>
-          <p>Booked</p>
-        </div>
-      </div>
-    `;
-
-    bookingsList.appendChild(card);
-  });
+  bookingsList.innerHTML = '<div class="no-bookings">Available appointments are shown in the time selector above.</div>';
 }
 
 function resetForm() {
@@ -135,8 +124,8 @@ function clearStatus() {
 }
 
 async function loadBookings(dateValue) {
-  renderTimeOptions(dateValue);
-  showStatus('Loading bookings...');
+  bookingTime.innerHTML = '';
+  showStatus('Loading available slots...');
 
   try {
     bookingsCache = await fetchBookings(dateValue);
@@ -144,9 +133,10 @@ async function loadBookings(dateValue) {
   } catch (error) {
     console.warn('Unable to load bookings for', dateValue, error);
     bookingsCache = [];
-    showStatus('Unable to load bookings from the server. Check your API or database connection.');
+    showStatus('Unable to load available times right now. Please try another date.');
   }
 
+  renderTimeOptions(dateValue);
   renderBookings(dateValue);
 }
 
@@ -171,11 +161,16 @@ bookingForm.addEventListener('submit', async (event) => {
     return;
   }
 
+  if (!booking.time) {
+    alert('Please choose an available time slot.');
+    return;
+  }
+
   await loadBookings(dateValue);
 
   if (conflictExists(booking)) {
-    alert('This timeslot is already booked. Please choose another one.');
-    renderTimeOptions(dateValue);
+    alert('Sorry, this time slot was just booked. Please choose another time.');
+    await loadBookings(dateValue);
     return;
   }
 
@@ -184,7 +179,13 @@ bookingForm.addEventListener('submit', async (event) => {
     resetForm();
     window.location.href = 'booking-success.html';
   } catch (error) {
-    alert(error.message);
+    if (error.message === 'Timeslot already booked' || error.message.includes('already booked')) {
+      alert('Sorry, this time slot was just booked. Please choose another time.');
+      await loadBookings(dateValue);
+      return;
+    }
+
+    alert(error.message || 'Unable to save your booking. Please try again.');
   }
 });
 
