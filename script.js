@@ -9,11 +9,6 @@ const selectedDateLabel = document.getElementById('selected-date-label');
 const statusMessage = document.getElementById('status-message');
 const todayButton = document.getElementById('today-button');
 const saveButton = document.getElementById('save-button');
-const cancelCodeInput = document.getElementById('cancel-code');
-const cancelButton = document.getElementById('cancel-button');
-const copyCodeButton = document.getElementById('copy-code-button');
-const cancelMessage = document.getElementById('cancel-message');
-const cancelCard = document.getElementById('cancel-card');
 
 const API_ROOT = '/api/bookings';
 const START_HOUR = 10;
@@ -84,7 +79,7 @@ function renderBookings(dateValue) {
       <div class="booking-meta">
         <div>
           <p><strong>${booking.time}</strong></p>
-          <p>${booking.service || 'Booked'}</p>
+          <p>Booked</p>
         </div>
       </div>
     `;
@@ -159,40 +154,6 @@ function conflictExists(booking) {
   return bookingsCache.some((existing) => existing.date === booking.date && existing.time === booking.time);
 }
 
-async function cancelBooking(bookingId) {
-  const response = await fetch(`${API_ROOT}/${bookingId}`, {
-    method: 'DELETE',
-    headers: {
-      'x-cancel-token': bookingId,
-    },
-  });
-
-  if (!response.ok && response.status !== 204) {
-    const payload = await parseJsonOrText(response);
-    throw new Error(payload.error || 'Unable to cancel booking');
-  }
-}
-
-function showCancelMessage(message) {
-  if (!cancelMessage) return;
-  cancelMessage.textContent = message;
-}
-
-function clearCancelMessage() {
-  if (!cancelMessage) return;
-  cancelMessage.textContent = '';
-}
-
-function showCancelCard() {
-  if (!cancelCard) return;
-  cancelCard.classList.remove('hidden');
-}
-
-function hideCancelCard() {
-  if (!cancelCard) return;
-  cancelCard.classList.add('hidden');
-}
-
 bookingForm.addEventListener('submit', async (event) => {
   event.preventDefault();
 
@@ -219,51 +180,11 @@ bookingForm.addEventListener('submit', async (event) => {
   }
 
   try {
-    const result = await createBooking(booking);
-    cancelCodeInput.value = result.id;
-    showCancelCard();
-    showStatus('Booking created. Copy your cancellation code immediately.');
-    await loadBookings(dateValue);
+    await createBooking(booking);
     resetForm();
+    window.location.href = 'booking-success.html';
   } catch (error) {
     alert(error.message);
-  }
-});
-
-cancelButton.addEventListener('click', async () => {
-  clearStatus();
-  clearCancelMessage();
-
-  const bookingId = cancelCodeInput.value.trim();
-  if (!bookingId) {
-    showCancelMessage('Enter your cancellation code first.');
-    return;
-  }
-
-  try {
-    await cancelBooking(bookingId);
-    showCancelMessage('Booking canceled successfully.');
-    if (bookingDate.value) {
-      await loadBookings(bookingDate.value);
-    }
-    cancelCodeInput.value = '';
-  } catch (error) {
-    showCancelMessage(error.message);
-  }
-});
-
-copyCodeButton.addEventListener('click', async () => {
-  const code = cancelCodeInput.value.trim();
-  if (!code) {
-    showCancelMessage('No cancellation code to copy.');
-    return;
-  }
-
-  try {
-    await navigator.clipboard.writeText(code);
-    showCancelMessage('Cancellation code copied to clipboard.');
-  } catch (error) {
-    showCancelMessage('Copy failed. Please copy the code manually.');
   }
 });
 
@@ -281,7 +202,6 @@ bookingDate.addEventListener('change', async () => {
 });
 
 window.addEventListener('load', async () => {
-  cancelCodeInput.value = '';
   const today = new Date().toISOString().slice(0, 10);
   bookingDate.value = today;
   await loadBookings(today);
