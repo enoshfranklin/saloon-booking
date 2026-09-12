@@ -6,12 +6,21 @@
   <title>Salon Booking</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
-<body>
-  <main class="container">
-    <header>
+<body class="theme-spider">
+  <div class="web-background" aria-hidden="true"></div>
+  <main class="container app-shell">
+    <header class="page-header">
+      <div class="brand-pill">The Red Room</div>
       <h1>Salon Booking</h1>
       <p>Book your makeover, swing into an open slot, and lock in your next appointment.</p>
     </header>
+
+    <div class="booking-steps" aria-label="Booking progress">
+      <span class="step active">Service</span>
+      <span class="step">Date</span>
+      <span class="step">Time</span>
+      <span class="step">Confirm</span>
+    </div>
 
     <section class="booking-panel">
       <div class="form-card">
