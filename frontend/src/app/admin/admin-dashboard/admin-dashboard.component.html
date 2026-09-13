@@ -1,22 +1,37 @@
 <app-web-background />
 
 <main class="container app-shell admin-shell">
-  <!-- ─── Page Header ─────────────────────────────────────── -->
   <header class="page-header admin-header">
-    <div class="brand-pill">Admin Control</div>
-    <h1>Admin Booking Management</h1>
-    <p>Manage bookings, update appointments, and cancel reservations with your admin secret.</p>
+    <div class="brand-pill">Admin Portal</div>
+    <h1>Booking Management</h1>
+    <p>Review daily appointments, update bookings, and manage customer follow-ups.</p>
   </header>
 
-  <section class="booking-panel">
-    <!-- ─── Admin Actions Card ─────────────────────────────── -->
-    <div class="form-card">
-      <h2>Admin Actions</h2>
-      
+  <section class="admin-summary" aria-label="Booking summary">
+    <div class="summary-stat">
+      <span class="summary-label">Selected date</span>
+      <strong>{{ selectedDateLabel() }}</strong>
+    </div>
+    <div class="summary-stat">
+      <span class="summary-label">Active</span>
+      <strong>{{ activeBookingCount() }}</strong>
+    </div>
+    <div class="summary-stat">
+      <span class="summary-label">Cancelled</span>
+      <strong>{{ cancelledBookingCount() }}</strong>
+    </div>
+  </section>
+
+  <section class="admin-grid">
+    <aside class="form-card admin-panel">
+      <div class="panel-header">
+        <p class="eyebrow">Admin Access</p>
+      </div>
+
       <label for="admin-token">
         Admin token
-        <input type="password" 
-               id="admin-token" 
+        <input type="password"
+               id="admin-token"
                placeholder="Enter admin token"
                [ngModel]="adminToken()"
                (ngModelChange)="onTokenChange($event)" />
@@ -24,23 +39,24 @@
 
       <label for="booking-date">
         View bookings for date
-        <input type="date" 
-               id="booking-date" 
+        <input type="date"
+               id="booking-date"
                [ngModel]="selectedDate()"
                (ngModelChange)="onDateChange($event)"
                required />
       </label>
 
-      <div class="form-actions">
-        <button type="button" class="secondary" (click)="onLoadClick()">
+      <div class="form-actions compact-actions">
+        <button type="button" class="primary" (click)="onLoadClick()">
           Load bookings
         </button>
       </div>
 
-      <!-- ─── Edit Booking Form ──────────────────────────────── -->
       @if (editingBooking()) {
         <div class="edit-card">
-          <h3>Edit booking</h3>
+          <div class="panel-header small-header">
+            <p class="eyebrow">Edit booking</p>
+          </div>
           <form (submit)="onSaveEdit(); $event.preventDefault()">
             <label>
               Date
@@ -70,26 +86,28 @@
                 }
               </select>
             </label>
-            <div class="form-actions">
-              <button type="submit" class="secondary">Save changes</button>
+            <div class="form-actions inline-actions">
+              <button type="submit" class="primary">Save changes</button>
               <button type="button" class="secondary" (click)="hideEditForm()">Cancel</button>
             </div>
           </form>
         </div>
       }
-    </div>
+    </aside>
 
-    <!-- ─── Bookings List Card ─────────────────────────────── -->
-    <div class="list-card">
+    <div class="list-card admin-list-panel">
       <div class="list-header">
-        <h2>Bookings for <span>{{ formatDate(selectedDate()) }}</span></h2>
+        <div>
+          <p class="eyebrow">Schedule</p>
+          <h2>Bookings for {{ selectedDateLabel() }}</h2>
+        </div>
         <button type="button" class="secondary" (click)="onTodayClick()">Today</button>
       </div>
 
       @if (statusMessage()) {
-        <div class="status-message" 
-             [style.background]="statusIsError() ? '#fee2e2' : '#fef3c7'"
-             [style.color]="statusIsError() ? '#991b1b' : '#92400e'">
+        <div class="status-message"
+             [class.status-error]="statusIsError()"
+             [class.status-success]="!statusIsError()">
           {{ statusMessage() }}
         </div>
       }
@@ -101,24 +119,25 @@
 
         @for (booking of bookings(); track booking.id) {
           <article class="booking-card">
-            <div class="booking-meta">
+            <div class="booking-head">
               <div>
-                <p><strong>{{ booking.time }}</strong> · {{ booking.customerName }}</p>
-                <p>{{ booking.service || 'No service selected' }}</p>
-                <p>{{ booking.phone || 'No phone provided' }}</p>
+                <span class="time-pill">{{ booking.time }}</span>
+                <h3>{{ booking.customerName }}</h3>
               </div>
-            </div>
-            
-            <div class="booking-status-row">
               <span class="status-badge" [class.cancelled]="isCancelled(booking)" [class.active]="!isCancelled(booking)">
                 {{ isCancelled(booking) ? 'Cancelled' : 'Active' }}
               </span>
             </div>
 
+            <div class="booking-meta">
+              <p><span>Service</span><strong>{{ booking.service || 'No service selected' }}</strong></p>
+              <p><span>Phone</span><strong>{{ booking.phone || 'No phone provided' }}</strong></p>
+            </div>
+
             <div class="booking-actions">
               @if (!isCancelled(booking)) {
                 <button type="button" class="edit" (click)="onEditBooking(booking)">Edit</button>
-                <button type="button" class="delete" (click)="onCancelBooking(booking)">Cancel Booking</button>
+                <button type="button" class="delete" (click)="onCancelBooking(booking)">Cancel</button>
               }
             </div>
 

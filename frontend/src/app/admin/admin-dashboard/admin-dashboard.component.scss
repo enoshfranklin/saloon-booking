@@ -1,3 +1,321 @@
 :host {
   display: block;
 }
+
+.admin-shell {
+  max-width: 1120px;
+  padding-top: 20px;
+}
+
+.admin-header {
+  margin-bottom: 18px;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-size: clamp(2.1rem, 3vw, 2.9rem);
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+}
+
+.admin-header p {
+  margin-top: 10px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.admin-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin: 0 auto 18px;
+}
+
+.summary-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(230, 57, 70, 0.16);
+  background: linear-gradient(180deg, rgba(15, 21, 32, 0.92), rgba(11, 16, 25, 0.86));
+  box-shadow: 0 8px 20px rgba(7, 10, 17, 0.2);
+}
+
+.summary-label {
+  color: var(--text-tertiary);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.summary-stat strong {
+  font-size: 1.3rem;
+  font-weight: 700;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.admin-panel,
+.admin-list-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.panel-header {
+  margin-bottom: 12px;
+}
+
+.small-header {
+  margin-top: 8px;
+}
+
+.eyebrow {
+  margin: 0;
+  color: var(--crimson);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.compact-actions {
+  margin-top: 8px;
+}
+
+.inline-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.inline-actions .primary,
+.inline-actions .secondary {
+  flex: 1;
+}
+
+.admin-list-panel {
+  min-height: 380px;
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.list-header h2 {
+  margin: 8px 0 0;
+  font-size: clamp(1.1rem, 2vw, 1.5rem);
+  color: var(--text);
+}
+
+.status-message {
+  margin-bottom: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  border: 1px solid rgba(230, 57, 70, 0.2);
+}
+
+.status-success {
+  background: rgba(230, 57, 70, 0.08);
+  color: var(--text-secondary);
+}
+
+.status-error {
+  background: rgba(239, 68, 68, 0.09);
+  color: #ffd6d6;
+  border-color: rgba(239, 68, 68, 0.25);
+}
+
+.bookings-list {
+  display: grid;
+  gap: 12px;
+}
+
+.booking-card {
+  display: grid;
+  gap: 12px;
+  padding: 14px 14px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(230, 57, 70, 0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.008));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
+}
+
+.booking-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.booking-head h3 {
+  margin: 8px 0 0;
+  font-size: 1.1rem;
+  color: var(--text);
+}
+
+.time-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.18);
+  color: var(--crimson);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.booking-meta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.booking-meta p {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  color: var(--text-secondary);
+  font-size: 0.72rem;
+}
+
+.booking-meta p span {
+  color: var(--text-tertiary);
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.booking-meta p strong {
+  color: var(--text);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 9px;
+  border-radius: 999px;
+  font-size: 9px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.status-badge.active {
+  background: rgba(34, 197, 94, 0.1);
+  color: #c7f9d6;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+
+.status-badge.cancelled {
+  background: rgba(239, 68, 68, 0.09);
+  color: #ffd7d7;
+  border: 1px solid rgba(239, 68, 68, 0.22);
+}
+
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.booking-actions button,
+.whatsapp-message-panel button {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.booking-actions .edit,
+.whatsapp-message-panel .whatsapp {
+  background: rgba(93, 124, 255, 0.09);
+  border: 1px solid rgba(93, 124, 255, 0.22);
+  color: #dfe8ff;
+}
+
+.booking-actions .delete {
+  background: rgba(230, 57, 70, 0.08);
+  border: 1px solid rgba(230, 57, 70, 0.22);
+  color: #ffdce1;
+}
+
+.whatsapp-message-panel {
+  display: grid;
+  gap: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.whatsapp-helper {
+  margin: 0;
+  color: var(--text-tertiary);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.no-bookings {
+  padding: 18px 14px;
+  border-radius: 12px;
+  border: 1px dashed rgba(230, 57, 70, 0.18);
+  background: rgba(255,255,255,0.01);
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.edit-card {
+  margin-top: 18px;
+  padding: 16px 14px 12px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(14, 18, 30, 0.94), rgba(10, 14, 23, 0.9));
+  border: 1px solid rgba(230, 57, 70, 0.14);
+}
+
+@media (max-width: 920px) {
+  .admin-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .admin-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-meta {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-head {
+    align-items: start;
+    flex-direction: column;
+  }
+
+  .list-header {
+    align-items: start;
+    flex-direction: column;
+  }
+}

@@ -186,4 +186,16 @@ export class AdminDashboardComponent implements OnInit {
   isCancelled(booking: AdminBooking): boolean {
     return (booking.status || '').toLowerCase() === 'cancelled';
   }
+
+  activeBookingCount(): number {
+    return this.bookings().filter((booking) => !this.isCancelled(booking)).length;
+  }
+
+  cancelledBookingCount(): number {
+    return this.bookings().filter((booking) => this.isCancelled(booking)).length;
+  }
+
+  selectedDateLabel(): string {
+    return this.formatDate(this.selectedDate());
+  }
 }
