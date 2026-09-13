@@ -1,135 +1,26 @@
 <app-web-background />
 
-<header class="topbar" aria-label="Main navigation">
-  <div class="nav-shell">
-    <a class="brand" href="#home" aria-label="Skyline Studio home">
-      <span class="brand-mark">S</span>
-      <span class="brand-text">Skyline Studio</span>
-    </a>
+<main class="container app-shell">
+  <header class="page-header">
+    <div class="brand-pill">Salon Booking</div>
+    <p class="page-kicker">Instant slot lock</p>
+    <h1>Book Your Slot</h1>
+    <p class="page-subtitle">Select your service, date, and preferred time slot.</p>
+  </header>
 
-    <nav class="primary-nav" aria-label="Main menu">
-      <a href="#home">Home</a>
-      <a href="#services">Services</a>
-      <a href="#booking">Book</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="/admin">Admin</a>
+  <section class="booking-layout" aria-label="Booking process">
+    <nav class="booking-progress" aria-label="Booking steps">
+      @for (step of [1,2,3,4]; track step) {
+        <div class="progress-item"
+             [class.active]="activeStep() === step"
+             [class.complete]="activeStep() > step">
+          <span class="step-number">{{ step }}</span>
+          <span class="step-label">{{ stepLabels[step - 1] }}</span>
+        </div>
+      }
     </nav>
 
-    <div class="nav-actions">
-      <a class="nav-cta" href="#booking">Book Appointment</a>
-    </div>
-  </div>
-</header>
-
-<main class="container home-shell">
-  <section class="hero-panel" id="home" aria-label="Salon hero section">
-    <div class="hero-copy">
-      <div class="brand-pill">New York night ritual</div>
-      <h1>Precision grooming for a sharper you.</h1>
-      <p>
-        Crafted for professionals, elevated rituals, and confident first impressions.
-        Reserve a refined cut, beard service, or color refresh in minutes.
-      </p>
-
-      <div class="hero-actions">
-        <a href="#booking" class="primary-button">Book Appointment</a>
-        <a href="#services" class="secondary-button">Explore Services</a>
-      </div>
-
-      <div class="hero-stats" aria-label="Salon highlights">
-        <div>
-          <strong>4.9/5</strong>
-          <span>Guest rating</span>
-        </div>
-        <div>
-          <strong>6:30 AM</strong>
-          <span>Open hours</span>
-        </div>
-        <div>
-          <strong>5 min</strong>
-          <span>Avg. booking</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-visual" aria-hidden="true">
-      <div class="visual-card status-card">
-        <span class="eyebrow small">Tonight’s opening</span>
-        <h3>8:30 PM</h3>
-        <p>Available before closing</p>
-      </div>
-
-      <div class="visual-card service-preview">
-        <div class="mini-header">
-          <span class="mini-dot red"></span>
-          <span class="mini-dot blue"></span>
-          <span class="mini-dot neutral"></span>
-        </div>
-        <div class="mini-summary">
-          <span class="label">Featured service</span>
-          <strong>{{ selectedService()?.name || 'Signature Cut' }}</strong>
-        </div>
-        <div class="mini-row">
-          <span>{{ selectedService()?.duration || '45 min' }}</span>
-          <strong>{{ selectedService()?.price || '$48' }}</strong>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="services-section" id="services" aria-label="Available services">
-    <div class="section-heading">
-      <div class="eyebrow">Our services</div>
-      <h2>Built for your routine.</h2>
-    </div>
-
-    <div class="service-grid" aria-label="Available service list">
-      @for (svc of serviceCatalog; track svc.value) {
-        <article class="service-card" [class.selected]="booking.service === svc.value">
-          <div class="service-card-top">
-            <span class="service-icon">{{ svc.icon }}</span>
-            <button type="button" class="service-book" (click)="selectService(svc.value); onServiceNext()">
-              Book
-            </button>
-          </div>
-
-          <div class="service-copy">
-            <h3>{{ svc.name }}</h3>
-            <p>{{ svc.description }}</p>
-          </div>
-
-          <div class="service-meta">
-            <span>{{ svc.duration }}</span>
-            <strong>{{ svc.price }}</strong>
-          </div>
-
-          <button type="button" class="service-select" [class.active]="booking.service === svc.value" (click)="selectService(svc.value)">
-            {{ booking.service === svc.value ? 'Selected' : 'Select service' }}
-          </button>
-        </article>
-      }
-    </div>
-  </section>
-
-  <section class="booking-layout" id="booking" aria-label="Booking process">
-    <div class="booking-surface">
-      <div class="booking-topline">
-        <div class="eyebrow">Reserve your chair</div>
-        <h2>Book an appointment</h2>
-      </div>
-
-      <nav class="booking-progress" aria-label="Booking steps">
-        @for (step of [1,2,3,4]; track step) {
-          <div class="progress-item"
-               [class.active]="activeStep() === step"
-               [class.complete]="activeStep() > step">
-            <span class="step-number">{{ step }}</span>
-            <span class="step-label">{{ stepLabels[step - 1] }}</span>
-          </div>
-        }
-      </nav>
-
+    <div class="booking-panel">
       <div class="form-card">
         @if (statusMessage()) {
           <div class="status-message" role="alert" aria-live="polite">{{ statusMessage() }}</div>
@@ -141,18 +32,14 @@
               <p class="eyebrow">STEP 1 — SELECT SERVICE</p>
             </div>
 
-            <div class="service-grid wizard-service-grid" aria-label="Available services">
-              @for (svc of serviceCatalog; track svc.value) {
+            <div class="service-grid" aria-label="Available services">
+              @for (svc of services; track svc.value) {
                 <button type="button"
-                        class="service-card wizard-service-card"
+                        class="service-card"
                         [class.selected]="booking.service === svc.value"
                         [attr.aria-pressed]="booking.service === svc.value"
                         (click)="selectService(svc.value)">
-                  <span class="service-icon">{{ svc.icon }}</span>
-                  <span class="service-copy-block">
-                    <span class="service-name">{{ svc.name }}</span>
-                    <span class="service-meta-short">{{ svc.duration }} • {{ svc.price }}</span>
-                  </span>
+                  <span class="service-name">{{ svc.name }}</span>
                 </button>
               }
             </div>
@@ -186,22 +73,19 @@
             </div>
 
             <div class="time-selector">
-              <div class="field-label-row"><span>Available slots</span></div>
+              <div class="field-label-row"><span>Available Slots</span></div>
 
               <div class="time-picker" aria-live="polite">
-                @if (daySlots().length > 0) {
+                @if (availableSlots().length > 0) {
                   <div class="time-grid" id="morning-grid">
                     @for (slot of morningSlots(); track slot.value) {
                       <button type="button"
                               class="time-slot-button"
                               [class.selected]="booking.time === slot.value"
-                              [class.disabled]="!slot.isAvailable"
                               [attr.aria-pressed]="booking.time === slot.value"
-                              [attr.aria-disabled]="!slot.isAvailable"
-                              [disabled]="!slot.isAvailable"
-                              (click)="slot.isAvailable && selectTime(slot)">
-                        <span>{{ slot.label }}</span>
-                        <small>{{ slot.isAvailable ? 'Open' : 'Booked' }}</small>
+                              [attr.data-time]="slot.value"
+                              (click)="selectTime(slot)">
+                        {{ slot.label }}
                       </button>
                     }
                   </div>
@@ -218,19 +102,16 @@
                       <button type="button"
                               class="time-slot-button"
                               [class.selected]="booking.time === slot.value"
-                              [class.disabled]="!slot.isAvailable"
                               [attr.aria-pressed]="booking.time === slot.value"
-                              [attr.aria-disabled]="!slot.isAvailable"
-                              [disabled]="!slot.isAvailable"
-                              (click)="slot.isAvailable && selectTime(slot)">
-                        <span>{{ slot.label }}</span>
-                        <small>{{ slot.isAvailable ? 'Open' : 'Booked' }}</small>
+                              [attr.data-time]="slot.value"
+                              (click)="selectTime(slot)">
+                        {{ slot.label }}
                       </button>
                     }
                   </div>
                 }
 
-                @if (daySlots().length === 0 && !statusMessage()) {
+                @if (availableSlots().length === 0 && !statusMessage()) {
                   <div class="time-empty">No appointments available for this date.</div>
                 }
               </div>
@@ -251,32 +132,30 @@
               <p class="eyebrow">STEP 3 — CUSTOMER DETAILS</p>
             </div>
 
-            <div class="detail-stack">
-              <label for="customer-name">
-                Full Name *
-                <input type="text"
-                       id="customer-name"
-                       placeholder="Jane Doe"
-                       [(ngModel)]="booking.customerName"
-                       required />
-              </label>
+            <label for="customer-name">
+              Full Name *
+              <input type="text"
+                     id="customer-name"
+                     placeholder="Jane Doe"
+                     [(ngModel)]="booking.customerName"
+                     required />
+            </label>
 
-              <label for="customer-phone">
-                WhatsApp Number *
-                <input type="tel"
-                       id="customer-phone"
-                       placeholder="(555) 123-4567"
-                       [(ngModel)]="booking.phone" />
-              </label>
+            <label for="customer-phone">
+              WhatsApp Number *
+              <input type="tel"
+                     id="customer-phone"
+                     placeholder="(555) 123-4567"
+                     [(ngModel)]="booking.phone" />
+            </label>
 
-              <label for="customer-email">
-                Email Address (Optional)
-                <input type="email"
-                       id="customer-email"
-                       placeholder="name@example.com"
-                       [(ngModel)]="booking.email" />
-              </label>
-            </div>
+            <label for="customer-email">
+              Email Address (Optional)
+              <input type="email"
+                     id="customer-email"
+                     placeholder="name@example.com"
+                     [(ngModel)]="booking.email" />
+            </label>
 
             <div class="step-actions">
               <button type="button" class="secondary" (click)="goToStep(2)">Back</button>
@@ -327,7 +206,7 @@
                       class="primary confirm-btn"
                       [disabled]="isSubmitting()"
                       (click)="onConfirmSubmit()">
-                {{ isSubmitting() ? 'Confirming...' : 'Confirm booking' }}
+                {{ isSubmitting() ? 'Confirming...' : 'CONFIRM BOOKING' }}
               </button>
             </div>
           </div>
@@ -335,25 +214,4 @@
       </div>
     </div>
   </section>
-
-  <footer class="site-footer" id="about">
-    <div class="footer-grid">
-      <div>
-        <div class="brand footer-brand">
-          <span class="brand-mark">S</span>
-          <span class="brand-text">Skyline Studio</span>
-        </div>
-        <p>Luxury grooming with a clean, considered point of view.</p>
-      </div>
-
-      <div id="contact">
-        <div class="footer-label">Contact</div>
-        <ul>
-          <li>hello&#64;skylinestudio.com</li>
-          <li>(212) 555-0199</li>
-          <li>43 W 20th St, NYC</li>
-        </ul>
-      </div>
-    </div>
-  </footer>
 </main>

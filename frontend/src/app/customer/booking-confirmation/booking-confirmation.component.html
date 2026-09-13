@@ -3,8 +3,8 @@
 <main class="container success-shell">
   <section class="booking-panel success-panel">
     <div class="success-scene" aria-hidden="true">
-      <div class="web-orbit web-left"></div>
-      <div class="web-orbit web-right"></div>
+      <div class="web-trail web-trail-left"></div>
+      <div class="web-trail web-trail-right"></div>
       <div class="hero-silhouette">
         <span class="hero-head"></span>
         <span class="hero-body"></span>
@@ -16,18 +16,22 @@
     </div>
 
     <div class="form-card success-card">
-      <div class="confirmation-badge">Ready for your next set</div>
-      <h2>You’re all set.</h2>
-      <p class="success-copy">Your appointment is locked in and the chair is waiting.</p>
+      <div class="confirmation-badge">✓ Slot Confirmed</div>
+      <h2>Booking Confirmed</h2>
+      <p class="success-copy">Your appointment has been confirmed.</p>
 
       <div class="summary-card confirmation-summary">
+        <div class="summary-row">
+          <span>Booking ID</span>
+          <strong>{{ booking.id || '—' }}</strong>
+        </div>
         <div class="summary-row">
           <span>Service</span>
           <strong>{{ booking.service || '—' }}</strong>
         </div>
         <div class="summary-row">
           <span>Date</span>
-          <strong>{{ formatDate(booking.date) }}</strong>
+          <strong>{{ booking.date || '—' }}</strong>
         </div>
         <div class="summary-row">
           <span>Time</span>
@@ -38,14 +42,14 @@
           <strong>{{ booking.customerName || '—' }}</strong>
         </div>
         <div class="summary-row">
-          <span>Booking ref.</span>
-          <strong>{{ booking.id || '—' }}</strong>
+          <span>WhatsApp</span>
+          <strong>{{ booking.phone || '—' }}</strong>
         </div>
       </div>
 
       <div class="form-actions success-actions">
-        <button type="button" class="button-link primary-link" (click)="addToCalendar()">Add to Calendar</button>
-        <a routerLink="/" class="button-link secondary-link">Back to Home</a>
+        <a routerLink="/" class="button-link">My Booking</a>
+        <a routerLink="/" class="button-link secondary-link">Book Another Slot</a>
       </div>
     </div>
   </section>
