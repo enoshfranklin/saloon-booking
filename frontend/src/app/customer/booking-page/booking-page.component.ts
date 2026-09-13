@@ -195,9 +195,11 @@ export class BookingPageComponent implements OnInit {
     };
 
     this.bookingService.createBooking(payload).subscribe({
-      next: () => {
+      next: (createdBooking) => {
         this.isSubmitting.set(false);
-        this.router.navigate(['/booking/success']);
+        this.router.navigate(['/booking/success'], {
+          state: { booking: createdBooking },
+        });
       },
       error: (err: Error) => {
         this.isSubmitting.set(false);

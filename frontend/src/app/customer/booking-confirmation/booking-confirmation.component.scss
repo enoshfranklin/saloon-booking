@@ -1,3 +1,217 @@
 :host {
   display: block;
 }
+
+.success-shell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px 0 48px;
+}
+
+.success-panel {
+  width: min(560px, calc(100vw - 24px));
+  position: relative;
+}
+
+.success-scene {
+  position: relative;
+  height: 124px;
+  background: linear-gradient(180deg, rgba(230, 57, 70, 0.08), rgba(93, 124, 255, 0.02));
+  border: 1px solid rgba(230, 57, 70, 0.18);
+  border-bottom: 0;
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+  opacity: 0.9;
+}
+
+.web-trail {
+  position: absolute;
+  inset: 18px 12% auto 12%;
+  height: 92px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.12);
+  opacity: 0.26;
+  animation: webDraw 2.6s ease-in-out infinite alternate;
+}
+
+.web-trail-left {
+  transform: rotate(-18deg) scaleX(0.88);
+}
+
+.web-trail-right {
+  transform: rotate(18deg) scaleX(0.9);
+  animation-delay: 0.35s;
+}
+
+.hero-silhouette {
+  position: absolute;
+  left: 50%;
+  bottom: 3px;
+  width: 160px;
+  height: 110px;
+  transform: translateX(-50%);
+  animation: successSwing 3s ease-in-out infinite;
+}
+
+.hero-head {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 36px;
+  height: 36px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0.06) 12%, rgba(230,57,70,0.7) 13%, rgba(230,57,70,0.94) 70%, rgba(10,16,28,0.8) 100%);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.hero-body {
+  position: absolute;
+  left: 50%;
+  top: 33px;
+  width: 64px;
+  height: 56px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(93,124,255,0.22));
+  clip-path: polygon(50% 0%, 72% 12%, 100% 44%, 86% 100%, 14% 100%, 0% 44%, 28% 12%);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.hero-arm,
+.hero-leg {
+  position: absolute;
+  display: block;
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(230,57,70,0.32));
+  border: 1px solid rgba(255,255,255,0.12);
+}
+
+.hero-arm {
+  top: 42px;
+  width: 12px;
+  height: 58px;
+  border-radius: 999px;
+}
+
+.arm-left {
+  left: 22px;
+  transform: rotate(28deg);
+}
+
+.arm-right {
+  right: 22px;
+  transform: rotate(-28deg);
+}
+
+.hero-leg {
+  top: 82px;
+  width: 13px;
+  height: 30px;
+  border-radius: 999px;
+}
+
+.leg-left {
+  left: 56px;
+  transform: rotate(12deg);
+}
+
+.leg-right {
+  right: 56px;
+  transform: rotate(-12deg);
+}
+
+.success-card {
+  max-width: 560px;
+  padding: 20px 18px 18px;
+  border-radius: 0 0 18px 18px;
+}
+
+.confirmation-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(230,57,70,0.08);
+  border: 1px solid rgba(230,57,70,0.2);
+  color: var(--crimson);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.success-card h2 {
+  margin: 14px 0 8px;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  color: var(--text);
+}
+
+.success-copy {
+  margin: 0 0 18px;
+  color: var(--text-secondary);
+}
+
+.confirmation-summary {
+  margin-bottom: 18px;
+}
+
+.success-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.button-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 190px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: 1px solid rgba(230,57,70,0.8);
+  background: linear-gradient(135deg, rgba(230,57,70,0.34), rgba(230,57,70,0.18));
+  color: var(--text);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.secondary-link {
+  border-color: rgba(255,255,255,0.12);
+  background: rgba(255,255,255,0.02);
+}
+
+@keyframes webDraw {
+  0% {
+    opacity: 0.12;
+    transform: scale(0.92) rotate(0deg);
+  }
+  100% {
+    opacity: 0.26;
+    transform: scale(1.04) rotate(6deg);
+  }
+}
+
+@keyframes successSwing {
+  0%, 100% {
+    transform: translateX(-50%) translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-8px) rotate(2deg);
+  }
+}
+
+@media (max-width: 480px) {
+  .success-actions {
+    flex-direction: column;
+  }
+
+  .button-link {
+    width: 100%;
+  }
+}
