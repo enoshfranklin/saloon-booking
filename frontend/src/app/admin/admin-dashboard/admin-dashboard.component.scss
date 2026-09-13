@@ -69,38 +69,6 @@
   overflow: hidden;
 }
 
-.panel-header {
-  margin-bottom: 12px;
-}
-
-.small-header {
-  margin-top: 8px;
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--crimson);
-  font-size: 10px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  font-weight: 700;
-}
-
-.compact-actions {
-  margin-top: 8px;
-}
-
-.inline-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 12px;
-}
-
-.inline-actions .primary,
-.inline-actions .secondary {
-  flex: 1;
-}
-
 .admin-list-panel {
   min-height: 380px;
 }

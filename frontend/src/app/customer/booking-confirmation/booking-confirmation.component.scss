@@ -17,40 +17,33 @@
 
 .success-scene {
   position: relative;
-  height: 124px;
-  background: linear-gradient(180deg, rgba(230, 57, 70, 0.08), rgba(93, 124, 255, 0.02));
-  border: 1px solid rgba(230, 57, 70, 0.18);
+  height: 116px;
+  background: linear-gradient(180deg, rgba(230,57,70,0.08), rgba(93,124,255,0.02));
+  border: 1px solid rgba(230,57,70,0.18);
   border-bottom: 0;
   border-radius: 16px 16px 0 0;
   overflow: hidden;
-  opacity: 0.9;
 }
 
 .web-trail {
   position: absolute;
-  inset: 18px 12% auto 12%;
-  height: 92px;
+  inset: 16px 12% auto 12%;
+  height: 82px;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.12);
-  opacity: 0.26;
+  opacity: 0.22;
   animation: webDraw 2.6s ease-in-out infinite alternate;
 }
 
-.web-trail-left {
-  transform: rotate(-18deg) scaleX(0.88);
-}
-
-.web-trail-right {
-  transform: rotate(18deg) scaleX(0.9);
-  animation-delay: 0.35s;
-}
+.web-trail-left { transform: rotate(-18deg) scaleX(0.88); }
+.web-trail-right { transform: rotate(18deg) scaleX(0.9); animation-delay: 0.35s; }
 
 .hero-silhouette {
   position: absolute;
   left: 50%;
-  bottom: 3px;
-  width: 160px;
-  height: 110px;
+  bottom: 0;
+  width: 150px;
+  height: 96px;
   transform: translateX(-50%);
   animation: successSwing 3s ease-in-out infinite;
 }
@@ -59,20 +52,20 @@
   position: absolute;
   left: 50%;
   top: 0;
-  width: 36px;
-  height: 36px;
+  width: 32px;
+  height: 32px;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.25), rgba(255,255,255,0.06) 12%, rgba(230,57,70,0.7) 13%, rgba(230,57,70,0.94) 70%, rgba(10,16,28,0.8) 100%);
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.25), rgba(230,57,70,0.7) 12%, rgba(230,57,70,0.94) 70%, rgba(10,16,28,0.8) 100%);
   border: 1px solid rgba(255,255,255,0.12);
 }
 
 .hero-body {
   position: absolute;
   left: 50%;
-  top: 33px;
-  width: 64px;
-  height: 56px;
+  top: 28px;
+  width: 62px;
+  height: 52px;
   transform: translateX(-50%);
   background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(93,124,255,0.22));
   clip-path: polygon(50% 0%, 72% 12%, 100% 44%, 86% 100%, 14% 100%, 0% 44%, 28% 12%);
@@ -88,42 +81,28 @@
 }
 
 .hero-arm {
-  top: 42px;
-  width: 12px;
-  height: 58px;
+  top: 38px;
+  width: 11px;
+  height: 52px;
   border-radius: 999px;
 }
 
-.arm-left {
-  left: 22px;
-  transform: rotate(28deg);
-}
-
-.arm-right {
-  right: 22px;
-  transform: rotate(-28deg);
-}
+.arm-left { left: 22px; transform: rotate(28deg); }
+.arm-right { right: 22px; transform: rotate(-28deg); }
 
 .hero-leg {
-  top: 82px;
-  width: 13px;
-  height: 30px;
+  top: 76px;
+  width: 12px;
+  height: 26px;
   border-radius: 999px;
 }
 
-.leg-left {
-  left: 56px;
-  transform: rotate(12deg);
-}
-
-.leg-right {
-  right: 56px;
-  transform: rotate(-12deg);
-}
+.leg-left { left: 56px; transform: rotate(12deg); }
+.leg-right { right: 56px; transform: rotate(-12deg); }
 
 .success-card {
   max-width: 560px;
-  padding: 20px 18px 18px;
+  padding: 18px 18px 16px;
   border-radius: 0 0 18px 18px;
 }
 
