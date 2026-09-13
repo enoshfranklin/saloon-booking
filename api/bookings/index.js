@@ -2,7 +2,7 @@ const { pool, initDb } = require('../db');
 const { callSupabaseBookingEmail } = require('../email-notify');
 const crypto = require('crypto');
 
-// Allowed slot minutes since midnight (same schedule as frontend)
+// 45-minute booking slots aligned to the salon schedule: 10:30 AM to 1:30 PM, then 2:30 PM to 7:30 PM
 const ALLOWED_SLOT_MINUTES = new Set([
   10 * 60 + 30,
   11 * 60 + 15,

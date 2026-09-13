@@ -24,7 +24,11 @@ let activeStep = 1;
 
 const API_ROOT = '/api/bookings';
 const SLOT_LENGTH_MINUTES = 45;
-// Allowed slot definitions (minutes since midnight)
+const MORNING_SESSION_START_MINUTES = 10 * 60 + 30;
+const MORNING_SESSION_END_MINUTES = 13 * 60 + 30;
+const AFTERNOON_SESSION_START_MINUTES = 14 * 60 + 30;
+const AFTERNOON_SESSION_END_MINUTES = 19 * 60 + 15;
+// 45-minute booking slots aligned to the salon schedule: 10:30 AM to 1:30 PM, then 2:30 PM to 7:30 PM
 const ALLOWED_SLOT_MINUTES = [
   10 * 60 + 30,
   11 * 60 + 15,
@@ -204,7 +208,7 @@ function renderTimeOptions(dateValue) {
       bookingTimePicker.appendChild(grid);
       const spacer = document.createElement('div');
       spacer.className = 'time-break';
-      spacer.innerHTML = '<span>Lunch break</span><small>2:30 PM onward</small>';
+      spacer.innerHTML = '<span>Break</span><small>1:30 PM – 2:30 PM</small>';
       bookingTimePicker.appendChild(spacer);
       grid = document.createElement('div');
       grid.className = 'time-grid';
