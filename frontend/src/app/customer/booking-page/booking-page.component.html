@@ -1,0 +1,262 @@
+<app-web-background />
+
+<main class="container app-shell">
+  <!-- ─── Page Header ─────────────────────────────────────── -->
+  <header class="page-header">
+    <div class="header-web" aria-hidden="true">
+      <svg viewBox="0 0 200 200" role="presentation" aria-hidden="true">
+        <defs>
+          <radialGradient id="webGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="rgba(220,20,60,0.65)"/>
+            <stop offset="100%" stop-color="rgba(65,105,225,0.2)"/>
+          </radialGradient>
+        </defs>
+        <circle cx="100" cy="100" r="68" fill="none" stroke="rgba(255,255,255,0.22)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="46" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+        <circle cx="100" cy="100" r="24" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+        <g stroke="rgba(255,255,255,0.22)" stroke-width="1">
+          <line x1="100" y1="20" x2="100" y2="180"/>
+          <line x1="30" y1="100" x2="170" y2="100"/>
+          <line x1="48" y1="48" x2="152" y2="152"/>
+          <line x1="152" y1="48" x2="48" y2="152"/>
+          <line x1="20" y1="70" x2="180" y2="130"/>
+          <line x1="20" y1="130" x2="180" y2="70"/>
+        </g>
+        <circle cx="100" cy="100" r="10" fill="url(#webGlow)" opacity="0.8"/>
+      </svg>
+    </div>
+    <div class="brand-pill">Salon Booking</div>
+    <h1>Book Your Appointment</h1>
+    <p>Reserve your next salon visit in a few quick steps.</p>
+  </header>
+
+  <!-- ─── Booking Layout ─────────────────────────────────── -->
+  <section class="booking-layout" aria-label="Booking process">
+    <!-- Progress sidebar -->
+    <aside class="booking-progress" aria-label="Booking steps">
+      @for (step of [1,2,3,4]; track step) {
+        <div class="progress-item"
+             [class.active]="activeStep() === step"
+             [class.complete]="activeStep() > step">
+          <span class="step-number">{{ step }}</span>
+          <span class="step-label">{{ stepLabels[step - 1] }}</span>
+        </div>
+      }
+    </aside>
+
+    <div class="booking-panel">
+      <div class="form-card">
+
+        <!-- ─── Status Message ─────────────────────────── -->
+        @if (statusMessage()) {
+          <div class="status-message" role="alert" aria-live="polite">{{ statusMessage() }}</div>
+        }
+
+        <!-- ═══════════════════════════════════════════════
+             STEP 1 — Service Selection
+             ═══════════════════════════════════════════════ -->
+        @if (activeStep() === 1) {
+          <div class="booking-step active">
+            <div class="step-header">
+              <p class="eyebrow">Step 1</p>
+              <h2>Choose a Service</h2>
+            </div>
+
+            <div class="service-grid" aria-label="Available services">
+              @for (svc of services; track svc.value) {
+                <button type="button"
+                        class="service-card"
+                        [class.selected]="booking.service === svc.value"
+                        [attr.aria-pressed]="booking.service === svc.value"
+                        (click)="selectService(svc.value)">
+                  <span class="service-name">{{ svc.name }}</span>
+                  <span class="service-meta">{{ svc.meta }}</span>
+                </button>
+              }
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="primary" (click)="onServiceNext()">
+                Next: Select Date &amp; Time
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- ═══════════════════════════════════════════════
+             STEP 2 — Date & Time
+             ═══════════════════════════════════════════════ -->
+        @if (activeStep() === 2) {
+          <div class="booking-step active">
+            <div class="step-header">
+              <p class="eyebrow">Step 2</p>
+              <h2>Date &amp; Time</h2>
+            </div>
+
+            <div class="date-row">
+              <label class="date-field">
+                <span class="field-label-row"><span>Date</span></span>
+                <div class="date-surface">
+                  <input type="date"
+                         id="booking-date"
+                         [value]="booking.date"
+                         (change)="onDateChange($any($event.target).value)"
+                         required />
+                </div>
+              </label>
+              <button type="button" class="secondary compact-button" (click)="onTodayClick()">Today</button>
+            </div>
+
+            <div class="time-selector">
+              <div class="field-label-row"><span>Available times</span></div>
+
+              <div class="time-picker" aria-live="polite">
+                @if (availableSlots().length > 0) {
+                  <div class="time-group-header">Available Times</div>
+                  <div class="time-grid" id="morning-grid">
+                    @for (slot of morningSlots(); track slot.value) {
+                      <button type="button"
+                              class="time-slot-button"
+                              [class.selected]="booking.time === slot.value"
+                              [attr.aria-pressed]="booking.time === slot.value"
+                              [attr.data-time]="slot.value"
+                              (click)="selectTime(slot)">
+                        {{ slot.label }}
+                      </button>
+                    }
+                  </div>
+
+                  @if (showBreak()) {
+                    <div class="time-break">
+                      <span>Break</span>
+                      <small>1:30 PM – 2:30 PM</small>
+                    </div>
+                  }
+
+                  <div class="time-grid" id="afternoon-grid">
+                    @for (slot of afternoonSlots(); track slot.value) {
+                      <button type="button"
+                              class="time-slot-button"
+                              [class.selected]="booking.time === slot.value"
+                              [attr.aria-pressed]="booking.time === slot.value"
+                              [attr.data-time]="slot.value"
+                              (click)="selectTime(slot)">
+                        {{ slot.label }}
+                      </button>
+                    }
+                  </div>
+                }
+
+                @if (availableSlots().length === 0 && !statusMessage()) {
+                  <div class="time-empty">No appointments available for this date.</div>
+                }
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="secondary" (click)="goToStep(1)">Back</button>
+              <button type="button" class="primary" (click)="onDateNext()">
+                Next: Enter Your Details
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- ═══════════════════════════════════════════════
+             STEP 3 — Customer Details
+             ═══════════════════════════════════════════════ -->
+        @if (activeStep() === 3) {
+          <div class="booking-step active">
+            <div class="step-header">
+              <p class="eyebrow">Step 3</p>
+              <h2>Your Details</h2>
+            </div>
+
+            <label for="customer-name">
+              Full name
+              <input type="text"
+                     id="customer-name"
+                     placeholder="Jane Doe"
+                     [(ngModel)]="booking.customerName"
+                     required />
+            </label>
+
+            <label for="customer-phone">
+              WhatsApp number
+              <input type="tel"
+                     id="customer-phone"
+                     placeholder="(555) 123-4567"
+                     [(ngModel)]="booking.phone" />
+            </label>
+
+            <label for="customer-email">
+              Email address
+              <input type="email"
+                     id="customer-email"
+                     placeholder="name@example.com"
+                     [(ngModel)]="booking.email" />
+            </label>
+
+            <div class="step-actions">
+              <button type="button" class="secondary" (click)="goToStep(2)">Back</button>
+              <button type="button" class="primary" (click)="onDetailsNext()">
+                Next: Review Booking
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- ═══════════════════════════════════════════════
+             STEP 4 — Confirm
+             ═══════════════════════════════════════════════ -->
+        @if (activeStep() === 4) {
+          <div class="booking-step active">
+            <div class="step-header">
+              <p class="eyebrow">Step 4</p>
+              <h2>Confirm Booking</h2>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-row">
+                <span>Service</span>
+                <strong>{{ booking.service || '—' }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>Date</span>
+                <strong>{{ booking.date ? formatDate(booking.date) : '—' }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>Time</span>
+                <strong>{{ booking.time || '—' }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>Customer</span>
+                <strong>{{ booking.customerName || '—' }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>WhatsApp</span>
+                <strong>{{ booking.phone || '—' }}</strong>
+              </div>
+              <div class="summary-row">
+                <span>Email</span>
+                <strong>{{ booking.email || '—' }}</strong>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="secondary" (click)="goToStep(3)">Back</button>
+              <button type="button"
+                      id="save-button"
+                      class="primary confirm-btn"
+                      [disabled]="isSubmitting()"
+                      (click)="onConfirmSubmit()">
+                {{ isSubmitting() ? 'Confirming...' : 'CONFIRM BOOKING' }}
+              </button>
+            </div>
+          </div>
+        }
+
+      </div><!-- /.form-card -->
+    </div><!-- /.booking-panel -->
+  </section>
+</main>

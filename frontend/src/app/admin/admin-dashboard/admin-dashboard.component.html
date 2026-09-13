@@ -1,0 +1,142 @@
+<app-web-background />
+
+<main class="container app-shell admin-shell">
+  <!-- ─── Page Header ─────────────────────────────────────── -->
+  <header class="page-header admin-header">
+    <div class="brand-pill">Admin Control</div>
+    <h1>Admin Booking Management</h1>
+    <p>Manage bookings, update appointments, and cancel reservations with your admin secret.</p>
+  </header>
+
+  <section class="booking-panel">
+    <!-- ─── Admin Actions Card ─────────────────────────────── -->
+    <div class="form-card">
+      <h2>Admin Actions</h2>
+      
+      <label for="admin-token">
+        Admin token
+        <input type="password" 
+               id="admin-token" 
+               placeholder="Enter admin token"
+               [ngModel]="adminToken()"
+               (ngModelChange)="onTokenChange($event)" />
+      </label>
+
+      <label for="booking-date">
+        View bookings for date
+        <input type="date" 
+               id="booking-date" 
+               [ngModel]="selectedDate()"
+               (ngModelChange)="onDateChange($event)"
+               required />
+      </label>
+
+      <div class="form-actions">
+        <button type="button" class="secondary" (click)="onLoadClick()">
+          Load bookings
+        </button>
+      </div>
+
+      <!-- ─── Edit Booking Form ──────────────────────────────── -->
+      @if (editingBooking()) {
+        <div class="edit-card">
+          <h3>Edit booking</h3>
+          <form (submit)="onSaveEdit(); $event.preventDefault()">
+            <label>
+              Date
+              <input type="date" name="editDate" [(ngModel)]="editForm.date" required />
+            </label>
+            <label>
+              Time
+              <input type="text" name="editTime" placeholder="9:00 AM" [(ngModel)]="editForm.time" required />
+            </label>
+            <label>
+              Customer name
+              <input type="text" name="editName" [(ngModel)]="editForm.customerName" required />
+            </label>
+            <label>
+              Phone
+              <input type="tel" name="editPhone" [(ngModel)]="editForm.phone" />
+            </label>
+            <label>
+              Email
+              <input type="email" name="editEmail" [(ngModel)]="editForm.email" />
+            </label>
+            <label>
+              Service
+              <select name="editService" [(ngModel)]="editForm.service">
+                @for (opt of serviceOptions; track opt.value) {
+                  <option [value]="opt.value">{{ opt.label }}</option>
+                }
+              </select>
+            </label>
+            <div class="form-actions">
+              <button type="submit" class="secondary">Save changes</button>
+              <button type="button" class="secondary" (click)="hideEditForm()">Cancel</button>
+            </div>
+          </form>
+        </div>
+      }
+    </div>
+
+    <!-- ─── Bookings List Card ─────────────────────────────── -->
+    <div class="list-card">
+      <div class="list-header">
+        <h2>Bookings for <span>{{ formatDate(selectedDate()) }}</span></h2>
+        <button type="button" class="secondary" (click)="onTodayClick()">Today</button>
+      </div>
+
+      @if (statusMessage()) {
+        <div class="status-message" 
+             [style.background]="statusIsError() ? '#fee2e2' : '#fef3c7'"
+             [style.color]="statusIsError() ? '#991b1b' : '#92400e'">
+          {{ statusMessage() }}
+        </div>
+      }
+
+      <div class="bookings-list">
+        @if (!isLoading() && bookings().length === 0 && !statusIsError() && adminToken()) {
+          <div class="no-bookings">No bookings found for this date.</div>
+        }
+
+        @for (booking of bookings(); track booking.id) {
+          <article class="booking-card">
+            <div class="booking-meta">
+              <div>
+                <p><strong>{{ booking.time }}</strong> · {{ booking.customerName }}</p>
+                <p>{{ booking.service || 'No service selected' }}</p>
+                <p>{{ booking.phone || 'No phone provided' }}</p>
+              </div>
+            </div>
+            
+            <div class="booking-status-row">
+              <span class="status-badge" [class.cancelled]="isCancelled(booking)" [class.active]="!isCancelled(booking)">
+                {{ isCancelled(booking) ? 'Cancelled' : 'Active' }}
+              </span>
+            </div>
+
+            <div class="booking-actions">
+              @if (!isCancelled(booking)) {
+                <button type="button" class="edit" (click)="onEditBooking(booking)">Edit</button>
+                <button type="button" class="delete" (click)="onCancelBooking(booking)">Cancel Booking</button>
+              }
+            </div>
+
+            @if (isCancelled(booking)) {
+              <div class="whatsapp-message-panel">
+                @if (buildWhatsAppLink(booking)) {
+                  <button type="button" class="whatsapp" (click)="onWhatsApp(booking)">
+                    Notify on WhatsApp
+                  </button>
+                  <p class="whatsapp-helper">WhatsApp message ready — press Send to notify the customer.</p>
+                } @else {
+                  <p class="whatsapp-helper">Customer phone number is not available.</p>
+                }
+              </div>
+            }
+          </article>
+        }
+      </div>
+    </div>
+  </section>
+</main>
