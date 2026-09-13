@@ -7,43 +7,49 @@
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 24px 0 48px;
+  padding: 28px 0 52px;
 }
 
 .success-panel {
-  width: min(560px, calc(100vw - 24px));
+  width: min(600px, calc(100vw - 24px));
   position: relative;
 }
 
 .success-scene {
   position: relative;
-  height: 116px;
-  background: linear-gradient(180deg, rgba(230,57,70,0.08), rgba(93,124,255,0.02));
-  border: 1px solid rgba(230,57,70,0.18);
+  height: 160px;
+  background: linear-gradient(180deg, rgba(230, 57, 70, 0.08), rgba(93, 124, 255, 0.02));
+  border: 1px solid rgba(230, 57, 70, 0.18);
   border-bottom: 0;
-  border-radius: 16px 16px 0 0;
+  border-radius: 22px 22px 0 0;
   overflow: hidden;
 }
 
-.web-trail {
+.web-orbit {
   position: absolute;
-  inset: 16px 12% auto 12%;
-  height: 82px;
+  inset: 18px 14% auto 14%;
+  height: 105px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 50%;
-  border: 1px solid rgba(255,255,255,0.12);
-  opacity: 0.22;
-  animation: webDraw 2.6s ease-in-out infinite alternate;
+  opacity: 0.4;
+  animation: webDraw 3.2s ease-in-out infinite alternate;
 }
 
-.web-trail-left { transform: rotate(-18deg) scaleX(0.88); }
-.web-trail-right { transform: rotate(18deg) scaleX(0.9); animation-delay: 0.35s; }
+.web-left {
+  transform: rotate(-12deg) scaleX(0.9);
+}
+
+.web-right {
+  transform: rotate(12deg) scaleX(0.9);
+  animation-delay: 0.25s;
+}
 
 .hero-silhouette {
   position: absolute;
   left: 50%;
-  bottom: 0;
-  width: 150px;
-  height: 96px;
+  bottom: 8px;
+  width: 180px;
+  height: 120px;
   transform: translateX(-50%);
   animation: successSwing 3s ease-in-out infinite;
 }
@@ -52,11 +58,11 @@
   position: absolute;
   left: 50%;
   top: 0;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   transform: translateX(-50%);
   border-radius: 50%;
-  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.25), rgba(230,57,70,0.7) 12%, rgba(230,57,70,0.94) 70%, rgba(10,16,28,0.8) 100%);
+  background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.28), rgba(230,57,70,0.72) 18%, rgba(230,57,70,0.94) 70%, rgba(10,16,28,0.8) 100%);
   border: 1px solid rgba(255,255,255,0.12);
 }
 
@@ -64,8 +70,8 @@
   position: absolute;
   left: 50%;
   top: 28px;
-  width: 62px;
-  height: 52px;
+  width: 66px;
+  height: 58px;
   transform: translateX(-50%);
   background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(93,124,255,0.22));
   clip-path: polygon(50% 0%, 72% 12%, 100% 44%, 86% 100%, 14% 100%, 0% 44%, 28% 12%);
@@ -76,34 +82,34 @@
 .hero-leg {
   position: absolute;
   display: block;
-  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(230,57,70,0.32));
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(230,57,70,0.22));
   border: 1px solid rgba(255,255,255,0.12);
 }
 
 .hero-arm {
-  top: 38px;
-  width: 11px;
-  height: 52px;
+  top: 42px;
+  width: 12px;
+  height: 54px;
   border-radius: 999px;
 }
 
-.arm-left { left: 22px; transform: rotate(28deg); }
-.arm-right { right: 22px; transform: rotate(-28deg); }
+.arm-left { left: 26px; transform: rotate(28deg); }
+.arm-right { right: 26px; transform: rotate(-28deg); }
 
 .hero-leg {
-  top: 76px;
+  top: 82px;
   width: 12px;
-  height: 26px;
+  height: 28px;
   border-radius: 999px;
 }
 
-.leg-left { left: 56px; transform: rotate(12deg); }
-.leg-right { right: 56px; transform: rotate(-12deg); }
+.leg-left { left: 62px; transform: rotate(10deg); }
+.leg-right { right: 62px; transform: rotate(-10deg); }
 
 .success-card {
-  max-width: 560px;
-  padding: 18px 18px 16px;
-  border-radius: 0 0 18px 18px;
+  max-width: 600px;
+  padding: 20px 18px 18px;
+  border-radius: 0 0 22px 22px;
 }
 
 .confirmation-badge {
@@ -113,8 +119,8 @@
   padding: 8px 12px;
   border-radius: 999px;
   background: rgba(230,57,70,0.08);
-  border: 1px solid rgba(230,57,70,0.2);
-  color: var(--crimson);
+  border: 1px solid rgba(230,57,70,0.22);
+  color: #ffbac0;
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.12em;
@@ -122,23 +128,25 @@
 }
 
 .success-card h2 {
-  margin: 14px 0 8px;
-  font-size: clamp(1.4rem, 3vw, 2rem);
-  color: var(--text);
+  margin: 16px 0 8px;
+  font-size: clamp(2rem, 5vw, 2.7rem);
+  letter-spacing: -0.06em;
+  color: #f5f8ff;
 }
 
 .success-copy {
   margin: 0 0 18px;
-  color: var(--text-secondary);
+  color: rgba(234,239,248,0.76);
+  line-height: 1.6;
 }
 
 .confirmation-summary {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .success-actions {
   display: flex;
-  gap: 10px;
+  gap: 12px;
   justify-content: center;
   flex-wrap: wrap;
 }
@@ -147,32 +155,45 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 190px;
-  padding: 12px 16px;
-  border-radius: 10px;
-  border: 1px solid rgba(230,57,70,0.8);
-  background: linear-gradient(135deg, rgba(230,57,70,0.34), rgba(230,57,70,0.18));
-  color: var(--text);
+  min-width: 204px;
+  min-height: 46px;
+  padding: 0 18px;
+  border-radius: 12px;
   text-decoration: none;
-  font-size: 11px;
+  font-size: 0.7rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.primary-link {
+  border: 1px solid rgba(230,57,70,0.36);
+  background: linear-gradient(135deg, rgba(230,57,70,0.9), rgba(196,40,58,0.9));
+  color: #fff;
+  box-shadow: 0 16px 30px rgba(230,57,70,0.15);
 }
 
 .secondary-link {
-  border-color: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.08);
   background: rgba(255,255,255,0.02);
+  color: #edf3ff;
+}
+
+.button-link:hover,
+.button-link:focus-visible {
+  transform: translateY(-1px);
 }
 
 @keyframes webDraw {
   0% {
     opacity: 0.12;
-    transform: scale(0.92) rotate(0deg);
+    transform: scale(0.9) rotate(0deg);
   }
   100% {
     opacity: 0.26;
-    transform: scale(1.04) rotate(6deg);
+    transform: scale(1.05) rotate(8deg);
   }
 }
 
@@ -181,7 +202,7 @@
     transform: translateX(-50%) translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateX(-50%) translateY(-8px) rotate(2deg);
+    transform: translateX(-50%) translateY(-10px) rotate(2deg);
   }
 }
 

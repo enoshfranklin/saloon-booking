@@ -32,7 +32,6 @@ export class BookingPageComponent implements OnInit {
   private readonly bookingService = inject(BookingService);
   private readonly router = inject(Router);
 
-  // ─── State ──────────────────────────────────────────────────────────────
   activeStep = signal<BookingStep>(1);
   bookingsCache = signal<BookingRecord[]>([]);
   availableSlots = signal<TimeSlot[]>([]);
@@ -41,16 +40,81 @@ export class BookingPageComponent implements OnInit {
 
   readonly stepLabels = ['Service', 'Date & Time', 'Details', 'Confirm'];
 
-  // Slots split at the lunch break (12:45 PM is the last morning slot)
+  readonly serviceCatalog = [
+    {
+      value: 'Haircut',
+      name: 'Signature Cut',
+      description: 'Precision shaping for a sharp, polished finish.',
+      duration: '45 min',
+      price: '$48',
+      icon: '✂️',
+    },
+    {
+      value: 'Beard',
+      name: 'Beard Sculpt',
+      description: 'Clean lines, soft edges, and a refined finish.',
+      duration: '30 min',
+      price: '$32',
+      icon: '🪒',
+    },
+    {
+      value: 'Haircut + Beard',
+      name: 'Cut & Beard',
+      description: 'Complete refresh with precision detailing.',
+      duration: '75 min',
+      price: '$74',
+      icon: '✨',
+    },
+    {
+      value: 'Color',
+      name: 'Color Renewal',
+      description: 'Depth, tone, and gloss for a richer, brighter look.',
+      duration: '60 min',
+      price: '$86',
+      icon: '🎨',
+    },
+    {
+      value: 'Style',
+      name: 'Style Finish',
+      description: 'A polished final look with texture and hold.',
+      duration: '40 min',
+      price: '$40',
+      icon: '🔥',
+    },
+  ];
+
+  selectedService = computed(
+    () => this.serviceCatalog.find((service) => service.value === this.booking.service) ?? null
+  );
+
+  daySlots = computed(() => {
+    if (!this.booking.date) {
+      return [] as Array<TimeSlot & { isAvailable: boolean }>;
+    }
+
+    const fullSlots = this.bookingService.timeSlotsForDate(this.booking.date);
+    const bookedSet = new Set(
+      this.bookingsCache()
+        .map((record) => this.bookingService.parseTimeToMinutes(record.time))
+        .filter((minutes): minutes is number => minutes !== null)
+    );
+
+    return fullSlots.map((slot) => ({
+      ...slot,
+      isAvailable: !bookedSet.has(slot.minutes),
+    }));
+  });
+
   morningSlots = computed(() =>
-    this.availableSlots().filter((s) => s.minutes <= 12 * 60 + 45)
+    this.daySlots().filter((slot) => slot.minutes <= 12 * 60 + 45)
   );
+
   afternoonSlots = computed(() =>
-    this.availableSlots().filter((s) => s.minutes >= 14 * 60 + 30)
+    this.daySlots().filter((slot) => slot.minutes >= 14 * 60 + 30)
   );
-  // Show break indicator only when there are slots on both sides
+
   showBreak = computed(
-    () => this.morningSlots().length > 0 || this.afternoonSlots().length > 0
+    () => this.morningSlots().length > 0 && this.afternoonSlots().length > 0
   );
 
   booking: BookingState = {
@@ -62,26 +126,15 @@ export class BookingPageComponent implements OnInit {
     email: '',
   };
 
-  // ─── Services ────────────────────────────────────────────────────────────
-  readonly services = [
-    { value: 'Haircut', name: 'Haircut', meta: 'Classic cut' },
-    { value: 'Beard', name: 'Beard', meta: 'Trim & shape' },
-    { value: 'Haircut + Beard', name: 'Haircut + Beard', meta: 'Complete refresh' },
-    { value: 'Color', name: 'Color', meta: 'Tone & finish' },
-    { value: 'Style', name: 'Style', meta: 'Finish & finesse' },
-  ];
-
   ngOnInit(): void {
     this.loadBookings(this.booking.date);
   }
 
-  // ─── Step navigation ────────────────────────────────────────────────────
   goToStep(step: BookingStep): void {
     this.activeStep.set(step);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ─── Step 1: Service ────────────────────────────────────────────────────
   selectService(value: string): void {
     this.booking.service = value;
   }
@@ -96,7 +149,6 @@ export class BookingPageComponent implements OnInit {
     this.loadBookings(this.booking.date);
   }
 
-  // ─── Step 2: Date & Time ────────────────────────────────────────────────
   onDateChange(date: string): void {
     this.booking.date = date;
     this.booking.time = '';
@@ -127,7 +179,6 @@ export class BookingPageComponent implements OnInit {
     this.goToStep(3);
   }
 
-  // ─── Step 3: Customer Details ────────────────────────────────────────────
   onDetailsNext(): void {
     if (!this.booking.customerName.trim()) {
       this.statusMessage.set('Please enter your full name.');
@@ -137,7 +188,6 @@ export class BookingPageComponent implements OnInit {
     this.goToStep(4);
   }
 
-  // ─── Step 4: Confirm ────────────────────────────────────────────────────
   onConfirmSubmit(): void {
     if (this.isSubmitting()) return;
 
@@ -160,7 +210,6 @@ export class BookingPageComponent implements OnInit {
     this.isSubmitting.set(true);
     this.statusMessage.set('');
 
-    // Re-check availability, then submit
     this.bookingService.fetchBookings(this.booking.date).subscribe({
       next: (fresh) => {
         this.bookingsCache.set(fresh);
@@ -178,7 +227,6 @@ export class BookingPageComponent implements OnInit {
         this.submitBooking();
       },
       error: () => {
-        // Proceed even if re-check fails; server validates
         this.submitBooking();
       },
     });
@@ -217,7 +265,6 @@ export class BookingPageComponent implements OnInit {
     });
   }
 
-  // ─── Helpers ──────────────────────────────────────────────────────────────
   private loadBookings(date: string): void {
     this.statusMessage.set('Loading available slots...');
     this.bookingService.fetchBookings(date).subscribe({

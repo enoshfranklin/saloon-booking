@@ -41,4 +41,48 @@ export class BookingConfirmationComponent implements OnInit {
       this.booking = history.state.booking;
     }
   }
+
+  formatDate(dateValue?: string): string {
+    if (!dateValue) return '—';
+    const date = new Date(`${dateValue}T00:00:00`);
+    return date.toLocaleDateString('en-US', {
+      weekday: 'short',
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
+  }
+
+  addToCalendar(): void {
+    if (!this.booking.date || !this.booking.time) return;
+
+    const date = this.booking.date;
+    const formattedDate = new Date(`${date}T00:00:00`);
+    const start = new Date(`${date}T${this.booking.time}`);
+    const end = new Date(start.getTime() + 45 * 60000);
+    const formatCalendarDate = (value: Date) =>
+      value.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}Z$/, 'Z');
+
+    const calendarText = [
+      'BEGIN:VCALENDAR',
+      'VERSION:2.0',
+      'BEGIN:VEVENT',
+      `UID:${this.booking.id || 'booking'}@skylinestudio`,
+      `DTSTAMP:${formatCalendarDate(new Date())}`,
+      `DTSTART:${formatCalendarDate(start)}`,
+      `DTEND:${formatCalendarDate(end)}`,
+      `SUMMARY:${this.booking.service || 'Salon Appointment'}`,
+      `DESCRIPTION:Booked with Skyline Studio`,
+      'END:VEVENT',
+      'END:VCALENDAR',
+    ].join('\n');
+
+    const blob = new Blob([calendarText], { type: 'text/calendar;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = `booking-${this.booking.id || 'appointment'}.ics`;
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
 }
