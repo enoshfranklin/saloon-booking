@@ -121,9 +121,59 @@ body::before {
   border-color: rgba(79, 170, 254, 0.12);
 }
 
-.spider,
+.spider {
+  position: absolute;
+  left: 50%;
+  top: 8%;
+  width: 26px;
+  height: 26px;
+  transform: translate(-50%, 0);
+  opacity: 0.5;
+  animation: spiderFloat 7s ease-in-out infinite;
+}
+
+.spider::before,
+.spider::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 10px;
+  height: 18px;
+  border-top: 2px solid rgba(255,255,255,0.5);
+  border-radius: 50%;
+}
+
+.spider::before {
+  left: 0;
+  transform: rotate(-22deg);
+}
+
+.spider::after {
+  right: 0;
+  transform: rotate(22deg);
+}
+
+.spider-body {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 14px;
+  height: 12px;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, rgba(255,255,255,0.8), rgba(120, 146, 178, 0.72));
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50% 50% 55% 55%;
+  box-shadow: 0 0 12px rgba(255, 77, 109, 0.12);
+}
+
 .web-emoji {
-  display: none;
+  position: absolute;
+  right: 12%;
+  top: 14%;
+  font-size: 2.4rem;
+  opacity: 0.16;
+  transform: rotate(8deg);
+  animation: webEmojiFloat 16s ease-in-out infinite;
 }
 
 .container {
@@ -683,9 +733,10 @@ button#save-button:disabled {
   display: grid;
   gap: 0;
   padding: 4px 0;
-  background: rgba(249,250,251,0.86);
+  background: rgba(10, 16, 27, 0.72);
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(111, 133, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .summary-row {
@@ -694,8 +745,8 @@ button#save-button:disabled {
   justify-content: space-between;
   gap: 12px;
   padding: 12px 14px;
-  border-bottom: 1px solid var(--border);
-  color: var(--text-light);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  color: rgba(214, 222, 239, 0.85);
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -707,7 +758,7 @@ button#save-button:disabled {
 }
 
 .summary-row strong {
-  color: var(--text-dark);
+  color: #edf3ff;
   font-size: 14px;
   letter-spacing: 0;
   text-transform: none;
@@ -977,6 +1028,16 @@ button#save-button:disabled {
 @keyframes successSwing {
   0%, 100% { transform: translateX(-50%) translateY(0); }
   50% { transform: translateX(-50%) translateY(-10px); }
+}
+
+@keyframes spiderFloat {
+  0%, 100% { transform: translate(-50%, 0px) scale(1); }
+  50% { transform: translate(-50%, -8px) scale(1.05); }
+}
+
+@keyframes webEmojiFloat {
+  0%, 100% { transform: rotate(8deg) translateY(0); }
+  50% { transform: rotate(8deg) translateY(-8px); }
 }
 
 @media (max-width: 768px) {
