@@ -13,6 +13,7 @@
     <div class="spider"><span class="spider-body"></span></div>
     <div class="web-emoji">🕸️</div>
   </div>
+
   <main class="container app-shell">
     <header class="page-header">
       <div class="header-web" aria-hidden="true">
@@ -37,47 +38,63 @@
           <circle cx="100" cy="100" r="10" fill="url(#webGlow)" opacity="0.8"/>
         </svg>
       </div>
-      <h1>Book an appointment</h1>
-      <p>Choose a service, pick a date, and select an available time.</p>
+      <div class="brand-pill">Salon Booking</div>
+      <h1>Book Your Appointment</h1>
+      <p>Reserve your next salon visit in a few quick steps.</p>
     </header>
 
-    <section class="booking-panel">
-      <div class="form-card">
-        <h2>New Booking</h2>
-        <form id="booking-form">
-          <div class="date-row">
-            <label class="date-field">
-              <span class="field-label-row">
-                <span>Date</span>
-              </span>
-              <div class="date-surface">
-                <input type="date" id="booking-date" required />
-              </div>
-            </label>
-            <button type="button" id="today-button" class="secondary compact-button">Today</button>
-          </div>
+    <section class="booking-layout" aria-label="Booking process">
+      <aside class="booking-progress" aria-label="Booking steps">
+        <div class="progress-item active" data-progress="1">
+          <span class="step-number">1</span>
+          <span class="step-label">Service</span>
+        </div>
+        <div class="progress-item" data-progress="2">
+          <span class="step-number">2</span>
+          <span class="step-label">Date & Time</span>
+        </div>
+        <div class="progress-item" data-progress="3">
+          <span class="step-number">3</span>
+          <span class="step-label">Details</span>
+        </div>
+        <div class="progress-item" data-progress="4">
+          <span class="step-number">4</span>
+          <span class="step-label">Confirm</span>
+        </div>
+      </aside>
 
-          <div class="time-selector">
-            <div class="field-label-row">
-              <span>Time slot</span>
+      <div class="booking-panel">
+        <form id="booking-form" class="form-card" novalidate>
+          <div class="booking-step active" data-step="1">
+            <div class="step-header">
+              <p class="eyebrow">Step 1</p>
+              <h2>Service</h2>
             </div>
-            <div id="booking-time-picker" class="time-picker" aria-live="polite"></div>
-            <input type="hidden" id="booking-time" name="booking-time" required />
-          </div>
 
-          <label>
-            Customer name
-            <input type="text" id="customer-name" placeholder="Jane Doe" required />
-          </label>
+            <div class="service-grid" aria-label="Available services">
+              <button type="button" class="service-card" data-service-value="Haircut" aria-pressed="false">
+                <span class="service-name">Haircut</span>
+                <span class="service-meta">Classic cut</span>
+              </button>
+              <button type="button" class="service-card" data-service-value="Beard" aria-pressed="false">
+                <span class="service-name">Beard</span>
+                <span class="service-meta">Trim &amp; shape</span>
+              </button>
+              <button type="button" class="service-card" data-service-value="Haircut + Beard" aria-pressed="false">
+                <span class="service-name">Haircut + Beard</span>
+                <span class="service-meta">Complete refresh</span>
+              </button>
+              <button type="button" class="service-card" data-service-value="Color" aria-pressed="false">
+                <span class="service-name">Color</span>
+                <span class="service-meta">Tone &amp; finish</span>
+              </button>
+              <button type="button" class="service-card" data-service-value="Style" aria-pressed="false">
+                <span class="service-name">Style</span>
+                <span class="service-meta">Finish &amp; finesse</span>
+              </button>
+            </div>
 
-          <label>
-            Phone number
-            <input type="tel" id="customer-phone" placeholder="(555) 123-4567" />
-          </label>
-
-          <label>
-            Service
-            <select id="service-type">
+            <select id="service-type" class="visually-hidden" aria-label="Selected service">
               <option value="">None</option>
               <option value="Haircut">Haircut</option>
               <option value="Beard">Beard</option>
@@ -85,16 +102,113 @@
               <option value="Color">Color</option>
               <option value="Style">Style</option>
             </select>
-          </label>
 
-          <div class="form-actions">
-            <button type="submit" id="save-button">Save Booking</button>
+            <div class="step-actions">
+              <button type="button" class="primary service-next">Next: Select Date & Time</button>
+            </div>
           </div>
+
+          <div class="booking-step" data-step="2">
+            <div class="step-header">
+              <p class="eyebrow">Step 2</p>
+              <h2>Date &amp; Time</h2>
+            </div>
+
+            <div class="date-row">
+              <label class="date-field">
+                <span class="field-label-row">
+                  <span>Date</span>
+                </span>
+                <div class="date-surface">
+                  <input type="date" id="booking-date" required />
+                </div>
+              </label>
+              <button type="button" id="today-button" class="secondary compact-button">Today</button>
+            </div>
+
+            <div class="time-selector">
+              <div class="field-label-row">
+                <span>Available times</span>
+              </div>
+              <div id="booking-time-picker" class="time-picker" aria-live="polite"></div>
+              <input type="hidden" id="booking-time" name="booking-time" required />
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="secondary back-step">Back</button>
+              <button type="button" class="primary date-next">Next: Enter Customer Details</button>
+            </div>
+          </div>
+
+          <div class="booking-step" data-step="3">
+            <div class="step-header">
+              <p class="eyebrow">Step 3</p>
+              <h2>Details</h2>
+            </div>
+
+            <label>
+              Full name
+              <input type="text" id="customer-name" placeholder="Jane Doe" required />
+            </label>
+
+            <label>
+              WhatsApp number
+              <input type="tel" id="customer-phone" placeholder="(555) 123-4567" />
+            </label>
+
+            <label>
+              Email address
+              <input type="email" id="customer-email" placeholder="name@example.com" />
+            </label>
+
+            <div class="step-actions">
+              <button type="button" class="secondary back-step">Back</button>
+              <button type="button" class="primary details-next">Next: Review Booking</button>
+            </div>
+          </div>
+
+          <div class="booking-step" data-step="4">
+            <div class="step-header">
+              <p class="eyebrow">Step 4</p>
+              <h2>Confirm</h2>
+            </div>
+
+            <div class="summary-card">
+              <div class="summary-row">
+                <span>Service</span>
+                <strong id="summary-service">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Date</span>
+                <strong id="summary-date">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Time</span>
+                <strong id="summary-time">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Customer</span>
+                <strong id="summary-customer">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>WhatsApp</span>
+                <strong id="summary-phone">—</strong>
+              </div>
+              <div class="summary-row">
+                <span>Email</span>
+                <strong id="summary-email">—</strong>
+              </div>
+            </div>
+
+            <div class="step-actions">
+              <button type="button" class="secondary back-step">Back</button>
+              <button type="submit" id="save-button">CONFIRM BOOKING</button>
+            </div>
+          </div>
+
+          <div id="status-message" class="status-message" aria-live="polite"></div>
         </form>
-
-        <div id="status-message" class="status-message" aria-live="polite"></div>
       </div>
-
     </section>
   </main>
 

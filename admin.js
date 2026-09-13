@@ -12,6 +12,7 @@ const editBookingDate = document.getElementById('edit-booking-date');
 const editBookingTime = document.getElementById('edit-booking-time');
 const editCustomerName = document.getElementById('edit-customer-name');
 const editCustomerPhone = document.getElementById('edit-customer-phone');
+const editCustomerEmail = document.getElementById('edit-customer-email');
 const editServiceType = document.getElementById('edit-service-type');
 const cancelEditButton = document.getElementById('cancel-edit');
 
@@ -120,6 +121,7 @@ function fillEditForm(booking) {
   editBookingTime.value = booking.time;
   editCustomerName.value = booking.customerName;
   editCustomerPhone.value = booking.phone || '';
+  editCustomerEmail.value = booking.email || '';
   editServiceType.value = booking.service || '';
   showEditForm();
 }
@@ -209,6 +211,7 @@ function renderBookings(bookings, dateValue) {
     card.dataset.time = booking.time;
     card.dataset.customerName = booking.customerName || '';
     card.dataset.phone = booking.phone || '';
+    card.dataset.email = booking.email || '';
     card.dataset.service = booking.service || '';
     card.dataset.status = status;
     card.innerHTML = `
@@ -323,6 +326,7 @@ document.addEventListener('click', async (event) => {
       time: bookingCard.dataset.time,
       customerName: bookingCard.dataset.customerName,
       phone: bookingCard.dataset.phone,
+      email: bookingCard.dataset.email,
       service: bookingCard.dataset.service,
     };
     fillEditForm(booking);
@@ -342,6 +346,7 @@ editBookingForm.addEventListener('submit', async (event) => {
     time: editBookingTime.value,
     customerName: editCustomerName.value.trim(),
     phone: editCustomerPhone.value.trim(),
+    email: editCustomerEmail ? editCustomerEmail.value.trim() : '',
     service: editServiceType.value,
   };
 

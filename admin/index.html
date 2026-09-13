@@ -3,14 +3,16 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Saloon Booking Admin</title>
+  <title>Admin Booking Management</title>
   <link rel="stylesheet" href="/styles.css" />
 </head>
-<body>
-  <main class="container">
-    <header>
+<body class="theme-spider admin-theme">
+  <div class="web-background" aria-hidden="true"></div>
+  <main class="container app-shell admin-shell">
+    <header class="page-header admin-header">
+      <div class="brand-pill">Admin Control</div>
       <h1>Admin Booking Management</h1>
-      <p>View and manage bookings for any date. Use your admin token to update or cancel appointments.</p>
+      <p>Manage bookings, update appointments, and cancel reservations with your admin secret.</p>
     </header>
 
     <section class="booking-panel">
@@ -49,6 +51,10 @@
               <input type="tel" id="edit-customer-phone" />
             </label>
             <label>
+              Email
+              <input type="email" id="edit-customer-email" />
+            </label>
+            <label>
               Service
               <select id="edit-service-type">
                 <option value="">None</option>
@@ -72,7 +78,7 @@
           <h2>Bookings for <span id="selected-date-label"></span></h2>
           <button id="today-button" class="secondary">Today</button>
         </div>
-        <div id="admin-status" class="status-message">Enter your admin token and click Load bookings.</div>
+        <div id="admin-status" class="status-message">Enter your admin token to view bookings.</div>
         <div id="bookings-list" class="bookings-list"></div>
       </div>
     </section>

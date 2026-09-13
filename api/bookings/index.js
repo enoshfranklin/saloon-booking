@@ -1,4 +1,5 @@
 const { pool, initDb } = require('../db');
+const { callSupabaseBookingEmail } = require('../email-notify');
 const crypto = require('crypto');
 
 // Allowed slot minutes since midnight (same schedule as frontend)
@@ -83,7 +84,7 @@ module.exports = async (req, res) => {
       } catch (error) {
         return jsonResponse(res, 400, { error: error.message });
       }
-      const { date, time, customerName, phone, service } = body;
+      const { date, time, customerName, phone, service, email } = body;
       if (!date || !time || !customerName) {
         return jsonResponse(res, 400, { error: 'date, time, and customerName are required' });
       }
@@ -94,11 +95,22 @@ module.exports = async (req, res) => {
         return jsonResponse(res, 400, { error: 'Invalid or unavailable time slot' });
       }
 
+      const sanitizedEmail = typeof email === 'string' ? email.trim() : '';
       const id = crypto.randomUUID();
+      const insertPayload = {
+        id,
+        date,
+        time,
+        customerName,
+        phone: phone || null,
+        service: service || null,
+        email: sanitizedEmail || null,
+      };
+
       try {
         await pool.query(
-          'INSERT INTO bookings (id, date, time, customer_name, phone, service) VALUES ($1, $2, $3, $4, $5, $6)',
-          [id, date, time, customerName, phone || null, service || null]
+          'INSERT INTO bookings (id, date, time, customer_name, phone, email, service) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+          [id, date, time, customerName, phone || null, sanitizedEmail || null, service || null]
         );
       } catch (error) {
         if (error.code === '23505') {
@@ -107,7 +119,21 @@ module.exports = async (req, res) => {
         return jsonResponse(res, 500, { error: 'Unable to save booking' });
       }
 
-      return jsonResponse(res, 201, { id, date, time, customerName, phone, service });
+      try {
+        await callSupabaseBookingEmail({
+          type: 'confirmation',
+          booking: {
+            ...insertPayload,
+            status: 'pending',
+            confirmation_email_sent_at: null,
+            cancellation_email_sent_at: null,
+          },
+        });
+      } catch (error) {
+        console.error('Confirmation email trigger failed:', error);
+      }
+
+      return jsonResponse(res, 201, { id, date, time, customerName, phone, email: sanitizedEmail || null, service });
     }
 
     return jsonResponse(res, 405, { error: 'Method not allowed' });

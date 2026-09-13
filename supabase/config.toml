@@ -1,0 +1,4 @@
+project_id = "your-supabase-project-id"
+
+[functions.send-booking-email]
+verify_jwt = false

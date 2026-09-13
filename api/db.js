@@ -41,8 +41,11 @@ async function initDb() {
       time text NOT NULL,
       customer_name text NOT NULL,
       phone text,
+      email text,
       service text,
       status text NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'confirmed', 'cancelled', 'completed')),
+      confirmation_email_sent_at timestamptz,
+      cancellation_email_sent_at timestamptz,
       created_at timestamptz DEFAULT now()
     );
   `);
@@ -50,6 +53,21 @@ async function initDb() {
   await pool.query(`
     ALTER TABLE bookings
       ADD COLUMN IF NOT EXISTS status text DEFAULT 'pending';
+  `);
+
+  await pool.query(`
+    ALTER TABLE bookings
+      ADD COLUMN IF NOT EXISTS email text;
+  `);
+
+  await pool.query(`
+    ALTER TABLE bookings
+      ADD COLUMN IF NOT EXISTS confirmation_email_sent_at timestamptz;
+  `);
+
+  await pool.query(`
+    ALTER TABLE bookings
+      ADD COLUMN IF NOT EXISTS cancellation_email_sent_at timestamptz;
   `);
 
   await pool.query(`

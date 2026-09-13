@@ -1,5 +1,6 @@
 const { pool, initDb } = require('../db');
 const { isAdmin } = require('../auth');
+const { callSupabaseBookingEmail } = require('../email-notify');
 
 // Allowed slot minutes since midnight (same schedule as frontend)
 const ALLOWED_SLOT_MINUTES = new Set([
@@ -70,7 +71,7 @@ module.exports = async (req, res) => {
     }
 
     const existing = await pool.query(
-      "SELECT id, COALESCE(status, 'pending') AS status FROM bookings WHERE id = $1",
+      "SELECT id, date, time, customer_name AS \"customerName\", phone, email, service, COALESCE(status, 'pending') AS status FROM bookings WHERE id = $1",
       [id]
     );
 
@@ -83,9 +84,27 @@ module.exports = async (req, res) => {
     }
 
     const result = await pool.query(
-      "UPDATE bookings SET status = 'cancelled' WHERE id = $1 RETURNING id, date, time, customer_name AS \"customerName\", phone, service, COALESCE(status, 'pending') AS status",
+      "UPDATE bookings SET status = 'cancelled' WHERE id = $1 RETURNING id, date, time, customer_name AS \"customerName\", phone, email, service, COALESCE(status, 'pending') AS status",
       [id]
     );
+
+    try {
+      await callSupabaseBookingEmail({
+        type: 'cancellation',
+        booking: {
+          id: result.rows[0].id,
+          date: result.rows[0].date,
+          time: result.rows[0].time,
+          customerName: result.rows[0].customerName,
+          phone: result.rows[0].phone,
+          email: result.rows[0].email,
+          service: result.rows[0].service,
+          status: 'cancelled',
+        },
+      });
+    } catch (error) {
+      console.error('Cancellation email trigger failed:', error);
+    }
 
     return jsonResponse(res, 200, result.rows[0]);
   }
@@ -114,8 +133,8 @@ module.exports = async (req, res) => {
 
     try {
       const result = await pool.query(
-        'UPDATE bookings SET date = $1, time = $2, customer_name = $3, phone = $4, service = $5 WHERE id = $6 RETURNING id, date, time, customer_name AS "customerName", phone, service',
-        [date, time, customerName, phone || null, service || null, id]
+        'UPDATE bookings SET date = $1, time = $2, customer_name = $3, phone = $4, email = $5, service = $6 WHERE id = $7 RETURNING id, date, time, customer_name AS "customerName", phone, email, service',
+        [date, time, customerName, phone || null, body.email || null, service || null, id]
       );
 
       if (result.rowCount === 0) {
