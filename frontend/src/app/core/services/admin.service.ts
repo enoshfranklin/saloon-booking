@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http
 import { Observable, throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { environment } from '../../../environments/environment';
+import { DateClosureStatus } from './booking.service';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 export interface AdminBooking {
@@ -31,6 +32,7 @@ export interface UpdateBookingPayload {
 export class AdminService {
   private readonly http = inject(HttpClient);
   private readonly apiBase = environment.apiBase;
+  private readonly closuresApi = environment.apiBase.replace(/\/bookings$/, '/closures');
 
   private adminToken = '';
 
@@ -119,6 +121,28 @@ export class AdminService {
     return this.http
       .put<AdminBooking>(`${this.apiBase}/${payload.id}`, payload, {
         headers: this.getHeaders().set('Content-Type', 'application/json'),
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  fetchDateClosure(date: string): Observable<DateClosureStatus> {
+    return this.http
+      .get<DateClosureStatus>(`${this.closuresApi}?date=${encodeURIComponent(date)}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  closeDate(date: string, note: string): Observable<DateClosureStatus> {
+    return this.http
+      .post<DateClosureStatus>(this.closuresApi, { date, note }, {
+        headers: this.getHeaders().set('Content-Type', 'application/json'),
+      })
+      .pipe(catchError(this.handleError));
+  }
+
+  reopenDate(date: string): Observable<DateClosureStatus> {
+    return this.http
+      .delete<DateClosureStatus>(`${this.closuresApi}?date=${encodeURIComponent(date)}`, {
+        headers: this.getHeaders(),
       })
       .pipe(catchError(this.handleError));
   }

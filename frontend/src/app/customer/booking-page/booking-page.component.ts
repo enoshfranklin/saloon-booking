@@ -38,6 +38,7 @@ export class BookingPageComponent implements OnInit {
   availableSlots = signal<TimeSlot[]>([]);
   statusMessage = signal('');
   isSubmitting = signal(false);
+  isDateClosed = signal(false);
 
   readonly stepLabels = ['Service', 'Date & Time', 'Details', 'Confirm'];
 
@@ -129,6 +130,10 @@ export class BookingPageComponent implements OnInit {
     if (this.booking.date < this.bookingService.todayDate()) {
       return;
     }
+    if (this.isDateClosed()) {
+      this.statusMessage.set('The shop is closed on this date. Choose another date.');
+      return;
+    }
     if (!this.booking.time) {
       this.statusMessage.set('Please choose an available time.');
       return;
@@ -162,6 +167,11 @@ export class BookingPageComponent implements OnInit {
     }
     if (!this.booking.time) {
       this.statusMessage.set('Please choose an available time slot.');
+      this.goToStep(2);
+      return;
+    }
+    if (this.isDateClosed()) {
+      this.statusMessage.set('The shop is closed on this date. Choose another date.');
       this.goToStep(2);
       return;
     }
@@ -224,6 +234,12 @@ export class BookingPageComponent implements OnInit {
       error: (err: Error) => {
         this.isSubmitting.set(false);
         const msg = err.message || '';
+        if (msg.toLowerCase().includes('shop is closed')) {
+          this.statusMessage.set('The shop is closed on this date. Choose another date.');
+          this.goToStep(2);
+          this.loadBookings(this.booking.date);
+          return;
+        }
         if (msg.includes('already booked') || msg.includes('Timeslot')) {
           this.statusMessage.set(
             'Sorry, this time slot was just booked. Please choose another time.'
@@ -239,6 +255,31 @@ export class BookingPageComponent implements OnInit {
 
   // ─── Helpers ──────────────────────────────────────────────────────────────
   private loadBookings(date: string): void {
+    this.statusMessage.set('Checking date availability...');
+    this.isDateClosed.set(false);
+    this.bookingsCache.set([]);
+    this.availableSlots.set([]);
+
+    this.bookingService.fetchDateClosure(date).subscribe({
+      next: (closure) => {
+        this.isDateClosed.set(closure.closed);
+        if (closure.closed) {
+          this.bookingsCache.set([]);
+          this.availableSlots.set([]);
+          this.statusMessage.set(
+            closure.note ? `Shop is closed: ${closure.note}` : 'The shop is closed on this date.'
+          );
+          return;
+        }
+        this.loadBookingsForOpenDate(date);
+      },
+      error: () => {
+        this.loadBookingsForOpenDate(date);
+      },
+    });
+  }
+
+  private loadBookingsForOpenDate(date: string): void {
     this.statusMessage.set('Loading available slots...');
     this.bookingService.fetchBookings(date).subscribe({
       next: (records) => {
@@ -257,6 +298,10 @@ export class BookingPageComponent implements OnInit {
   }
 
   private updateAvailableSlots(date: string): void {
+    if (this.isDateClosed()) {
+      this.availableSlots.set([]);
+      return;
+    }
     this.availableSlots.set(
       this.bookingService.getAvailableSlots(date, this.bookingsCache())
     );

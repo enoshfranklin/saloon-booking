@@ -44,6 +44,48 @@
                required />
       </label>
 
+      <section class="admin-closure-control" aria-label="Shop availability for selected date">
+        <div class="admin-closure-heading">
+          <span>Shop availability</span>
+          @if (isClosureLoading()) {
+            <span class="admin-closure-state">Checking</span>
+          } @else if (dateClosure()?.closed) {
+            <span class="admin-closure-state is-closed">Closed</span>
+          } @else if (dateClosure()) {
+            <span class="admin-closure-state is-open">Open</span>
+          }
+        </div>
+
+        @if (dateClosure()?.closed && dateClosure()?.note) {
+          <p class="admin-closure-note">{{ dateClosure()?.note }}</p>
+        } @else {
+          <label for="closure-note">Leave note (optional)</label>
+          <input type="text"
+                 id="closure-note"
+                 maxlength="250"
+                 placeholder="e.g. Shop leave"
+                 [(ngModel)]="closureNote" />
+        }
+
+        @if (dateClosure()?.closed) {
+          <button type="button"
+                  class="secondary"
+                  [disabled]="isClosureLoading() || isClosureSaving() || !adminToken().trim()"
+                  (click)="reopenSelectedDate()">
+            Reopen date
+          </button>
+        } @else {
+          <button type="button"
+                  class="secondary"
+                  [disabled]="isClosureLoading() || isClosureSaving() || !dateClosure() || !adminToken().trim()"
+                  (click)="closeSelectedDate()">
+            Close this date
+          </button>
+        }
+
+        <p class="admin-closure-helper">Closing stops new bookings; existing appointments stay scheduled.</p>
+      </section>
+
       <div class="form-actions compact-actions">
         <button type="button" class="primary" (click)="onLoadClick()">
           Load bookings

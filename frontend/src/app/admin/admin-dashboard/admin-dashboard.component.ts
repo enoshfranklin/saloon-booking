@@ -2,7 +2,7 @@ import { Component, signal, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AdminService, AdminBooking, UpdateBookingPayload } from '../../core/services/admin.service';
-import { WebBackgroundComponent } from '../../shared/web-background/web-background.component';
+import { DateClosureStatus } from '../../core/services/booking.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -21,6 +21,10 @@ export class AdminDashboardComponent implements OnInit {
   statusMessage = signal('Enter your admin token and click Load bookings.');
   statusIsError = signal(false);
   isLoading = signal(false);
+  dateClosure = signal<DateClosureStatus | null>(null);
+  isClosureLoading = signal(false);
+  isClosureSaving = signal(false);
+  closureNote = '';
 
   editingBooking = signal<AdminBooking | null>(null);
   editForm = {
@@ -42,7 +46,7 @@ export class AdminDashboardComponent implements OnInit {
   ];
 
   ngOnInit(): void {
-    // Pre-set today's date
+    this.loadDateClosure(this.selectedDate());
   }
 
   // ─── Token & Date ─────────────────────────────────────────────────────────
@@ -53,12 +57,56 @@ export class AdminDashboardComponent implements OnInit {
 
   onDateChange(date: string): void {
     this.selectedDate.set(date);
+    if (date) this.loadDateClosure(date);
   }
 
   onTodayClick(): void {
     const today = new Date().toISOString().slice(0, 10);
     this.selectedDate.set(today);
+    this.loadDateClosure(today);
     this.loadBookings(today);
+  }
+
+  closeSelectedDate(): void {
+    if (!this.adminToken().trim()) {
+      this.setStatus('Enter your admin token before changing shop availability.', true);
+      return;
+    }
+
+    this.isClosureSaving.set(true);
+    this.adminService.closeDate(this.selectedDate(), this.closureNote).subscribe({
+      next: (closure) => {
+        this.dateClosure.set(closure);
+        this.closureNote = closure.note;
+        this.isClosureSaving.set(false);
+        this.setStatus('Date closed for new bookings. Existing bookings remain scheduled.', false);
+      },
+      error: (err: Error) => {
+        this.isClosureSaving.set(false);
+        this.setStatus(err.message || 'Unable to close this date.', true);
+      },
+    });
+  }
+
+  reopenSelectedDate(): void {
+    if (!this.adminToken().trim()) {
+      this.setStatus('Enter your admin token before changing shop availability.', true);
+      return;
+    }
+
+    this.isClosureSaving.set(true);
+    this.adminService.reopenDate(this.selectedDate()).subscribe({
+      next: (closure) => {
+        this.dateClosure.set(closure);
+        this.closureNote = '';
+        this.isClosureSaving.set(false);
+        this.setStatus('Date reopened for bookings.', false);
+      },
+      error: (err: Error) => {
+        this.isClosureSaving.set(false);
+        this.setStatus(err.message || 'Unable to reopen this date.', true);
+      },
+    });
   }
 
   // ─── Load Bookings ───────────────────────────────────────────────────────
@@ -87,6 +135,22 @@ export class AdminDashboardComponent implements OnInit {
         this.setStatus(err.message || 'Unable to load bookings.', true);
         this.bookings.set([]);
         this.isLoading.set(false);
+      },
+    });
+  }
+
+  private loadDateClosure(date: string): void {
+    this.isClosureLoading.set(true);
+    this.dateClosure.set(null);
+    this.adminService.fetchDateClosure(date).subscribe({
+      next: (closure) => {
+        this.dateClosure.set(closure);
+        this.closureNote = closure.note;
+        this.isClosureLoading.set(false);
+      },
+      error: () => {
+        this.dateClosure.set(null);
+        this.isClosureLoading.set(false);
       },
     });
   }
@@ -153,6 +217,7 @@ export class AdminDashboardComponent implements OnInit {
       next: () => {
         this.hideEditForm();
         this.loadBookings(payload.date);
+        this.loadDateClosure(payload.date);
         this.selectedDate.set(payload.date);
       },
       error: (err: Error) => {

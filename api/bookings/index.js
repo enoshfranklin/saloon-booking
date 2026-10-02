@@ -116,10 +116,15 @@ module.exports = async (req, res) => {
       };
 
       try {
-        await pool.query(
-          'INSERT INTO bookings (id, date, time, customer_name, phone, email, service) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        const insertResult = await pool.query(
+          `INSERT INTO bookings (id, date, time, customer_name, phone, email, service)
+           SELECT $1, $2, $3, $4, $5, $6, $7
+           WHERE NOT EXISTS (SELECT 1 FROM shop_closed_dates WHERE date = $2)`,
           [id, date, time, customerName, phone || null, sanitizedEmail || null, service || null]
         );
+        if (insertResult.rowCount === 0) {
+          return jsonResponse(res, 409, { error: 'Shop is closed on this date' });
+        }
       } catch (error) {
         if (error.code === '23505') {
           return jsonResponse(res, 409, { error: 'Timeslot already booked' });

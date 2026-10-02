@@ -35,6 +35,14 @@ global.__booking_pool = pool;
 
 async function initDb() {
   await pool.query(`
+    CREATE TABLE IF NOT EXISTS shop_closed_dates (
+      date text PRIMARY KEY,
+      note text NOT NULL DEFAULT '',
+      created_at timestamptz NOT NULL DEFAULT now()
+    );
+  `);
+
+  await pool.query(`
     CREATE TABLE IF NOT EXISTS bookings (
       id text PRIMARY KEY,
       date text NOT NULL,

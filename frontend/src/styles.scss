@@ -1450,6 +1450,46 @@ button#save-button:disabled {
   font-size: 0.8rem;
 }
 
+.admin-closure-control {
+  display: grid;
+  gap: 10px;
+  margin: 4px 0 18px;
+  padding: 14px 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.admin-closure-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.admin-closure-state {
+  color: var(--text-muted);
+  font-size: 0.68rem;
+  text-transform: uppercase;
+}
+
+.admin-closure-state.is-closed {
+  color: #ffd7d7;
+}
+
+.admin-closure-state.is-open {
+  color: #c7f9d6;
+}
+
+.admin-closure-note,
+.admin-closure-helper {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.72rem;
+  line-height: 1.45;
+}
+
 .brand-pill,
 .page-kicker,
 .page-subtitle,

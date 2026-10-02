@@ -40,6 +40,12 @@ export interface BookingRecord {
   status?: string;
 }
 
+export interface DateClosureStatus {
+  date: string;
+  closed: boolean;
+  note: string;
+}
+
 export interface CreateBookingPayload {
   date: string;
   time: string;
@@ -65,6 +71,7 @@ export interface CreatedBooking {
 export class BookingService {
   private readonly http = inject(HttpClient);
   private readonly apiBase = environment.apiBase;
+  private readonly closuresApi = environment.apiBase.replace(/\/bookings$/, '/closures');
 
   /** Format a Date to 12-hour time label (e.g. "10:30 AM") */
   formatTimeLabel(date: Date): string {
@@ -160,6 +167,13 @@ export class BookingService {
   fetchBookings(date: string): Observable<BookingRecord[]> {
     return this.http
       .get<BookingRecord[]>(`${this.apiBase}?date=${encodeURIComponent(date)}`)
+      .pipe(catchError(this.handleError));
+  }
+
+  /** GET /api/closures?date=YYYY-MM-DD */
+  fetchDateClosure(date: string): Observable<DateClosureStatus> {
+    return this.http
+      .get<DateClosureStatus>(`${this.closuresApi}?date=${encodeURIComponent(date)}`)
       .pipe(catchError(this.handleError));
   }
 
