@@ -1468,6 +1468,29 @@ button#save-button:disabled {
     align-items: stretch;
   }
 
+  .date-field {
+    align-items: stretch;
+    width: 100%;
+  }
+
+  .date-field .field-label-row {
+    justify-content: center;
+  }
+
+  .date-surface,
+  #booking-date {
+    width: 100%;
+  }
+
+  #booking-date {
+    display: block;
+    text-align: center;
+  }
+
+  #booking-date::-webkit-date-and-time-value {
+    text-align: center;
+  }
+
   .step-actions .secondary,
   .step-actions .primary,
   .compact-button {

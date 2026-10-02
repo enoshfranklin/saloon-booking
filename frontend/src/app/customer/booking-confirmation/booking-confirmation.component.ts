@@ -41,11 +41,4 @@ export class BookingConfirmationComponent implements OnInit {
     }
   }
 
-  goToMyBooking(): void {
-    void this.router.navigateByUrl('/booking/details', {
-      state: { booking: this.booking },
-    }).then(() => {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-  }
 }
