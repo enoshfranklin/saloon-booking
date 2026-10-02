@@ -60,12 +60,13 @@
               <label class="date-field">
                 <span class="field-label-row"><span>Date</span></span>
                 <div class="date-surface">
+                    <span class="date-display" aria-hidden="true">{{ formatDateInput(booking.date) }}</span>
                   <input type="date"
                          id="booking-date"
-                        lang="en-GB"
+                      aria-label="Choose appointment date"
                          [min]="minBookingDate"
                          [value]="booking.date"
-                         (change)="onDateChange($any($event.target).value)"
+                         (change)="onDateChange($event)"
                          required />
                 </div>
               </label>

@@ -97,7 +97,15 @@ export class BookingPageComponent implements OnInit {
   }
 
   // ─── Step 2: Date & Time ────────────────────────────────────────────────
-  onDateChange(date: string): void {
+  onDateChange(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const date = input.value;
+    if (date < this.bookingService.todayDate()) {
+      input.value = this.booking.date;
+      this.statusMessage.set('Past dates cannot be selected. Choose today or a future date.');
+      return;
+    }
+
     this.booking.date = date;
     this.booking.time = '';
     this.loadBookings(date);
@@ -117,6 +125,10 @@ export class BookingPageComponent implements OnInit {
   onDateNext(): void {
     if (!this.booking.date) {
       this.statusMessage.set('Please choose a date.');
+      return;
+    }
+    if (this.booking.date < this.bookingService.todayDate()) {
+      this.statusMessage.set('Please choose today or a future date.');
       return;
     }
     if (!this.booking.time) {
@@ -254,6 +266,11 @@ export class BookingPageComponent implements OnInit {
 
   formatDate(dateValue: string): string {
     return this.bookingService.formatDate(dateValue);
+  }
+
+  formatDateInput(dateValue: string): string {
+    const match = dateValue.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    return match ? `${match[3]}/${match[2]}/${match[1]}` : '';
   }
 
   get minBookingDate(): string {
