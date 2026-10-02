@@ -65,6 +65,7 @@
                          id="booking-date"
                       aria-label="Choose appointment date"
                          [attr.min]="minBookingDate"
+                         [attr.max]="maxBookingDate"
                          [value]="booking.date"
                          (change)="onDateChange($event)"
                          required />

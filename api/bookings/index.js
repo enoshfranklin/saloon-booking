@@ -1,7 +1,11 @@
 const { pool, initDb } = require('../db');
 const { callSupabaseBookingEmail } = require('../email-notify');
 const crypto = require('crypto');
-const { isValidBookingDate, isBookingDateTimeInPast } = require('../booking-time');
+const {
+  isValidBookingDate,
+  isBookingDateWithinWindow,
+  isBookingDateTimeInPast,
+} = require('../booking-time');
 
 // 45-minute booking slots aligned to the salon schedule: 10:30 AM to 1:30 PM, then 2:30 PM to 7:30 PM
 const ALLOWED_SLOT_MINUTES = new Set([
@@ -92,6 +96,9 @@ module.exports = async (req, res) => {
 
       if (!isValidBookingDate(date)) {
         return jsonResponse(res, 400, { error: 'Invalid booking date' });
+      }
+      if (!isBookingDateWithinWindow(date, new Date(), timeZone)) {
+        return jsonResponse(res, 400, { error: 'Bookings can only be made up to 7 days in advance' });
       }
 
       // Validate time slot is allowed

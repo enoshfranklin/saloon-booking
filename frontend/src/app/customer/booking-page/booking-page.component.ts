@@ -101,11 +101,13 @@ export class BookingPageComponent implements OnInit {
   onDateChange(event: Event): void {
     const input = event.target as HTMLInputElement;
     const date = input.value;
-    if (date < this.bookingService.todayDate()) {
+    if (date < this.minBookingDate || date > this.maxBookingDate) {
       input.value = this.booking.date;
+      this.statusMessage.set('Bookings are available up to 7 days in advance.');
       return;
     }
 
+    this.statusMessage.set('');
     this.booking.date = date;
     this.booking.time = '';
     this.loadBookings(date);
@@ -127,7 +129,8 @@ export class BookingPageComponent implements OnInit {
       this.statusMessage.set('Please choose a date.');
       return;
     }
-    if (this.booking.date < this.bookingService.todayDate()) {
+    if (this.booking.date < this.minBookingDate || this.booking.date > this.maxBookingDate) {
+      this.statusMessage.set('Choose a date within the next 7 days.');
       return;
     }
     if (this.isDateClosed()) {
@@ -167,6 +170,11 @@ export class BookingPageComponent implements OnInit {
     }
     if (!this.booking.time) {
       this.statusMessage.set('Please choose an available time slot.');
+      this.goToStep(2);
+      return;
+    }
+    if (this.booking.date < this.minBookingDate || this.booking.date > this.maxBookingDate) {
+      this.statusMessage.set('Choose a date within the next 7 days.');
       this.goToStep(2);
       return;
     }
@@ -318,5 +326,14 @@ export class BookingPageComponent implements OnInit {
 
   get minBookingDate(): string {
     return this.bookingService.todayDate();
+  }
+
+  get maxBookingDate(): string {
+    const latestDate = new Date(`${this.minBookingDate}T00:00:00`);
+    latestDate.setDate(latestDate.getDate() + 7);
+    const year = latestDate.getFullYear();
+    const month = String(latestDate.getMonth() + 1).padStart(2, '0');
+    const day = String(latestDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   }
 }
