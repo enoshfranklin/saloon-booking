@@ -392,10 +392,6 @@ h1 .slot-word,
   display: block;
 }
 
-.booking-step.exit,
-.form-step.exit {
-}
-
 .step-header {
   margin: 0 0 18px;
 }
@@ -1212,13 +1208,13 @@ label {
   margin-bottom: 0;
 }
 
-.date-surface {
+.app-shell:not(.admin-shell) .date-surface {
   position: relative;
   border-radius: 10px;
   background: rgba(255,255,255,0.02);
 }
 
-.date-display {
+.app-shell:not(.admin-shell) .date-display {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1229,7 +1225,7 @@ label {
   font-weight: 500;
 }
 
-#booking-date {
+.app-shell:not(.admin-shell) #booking-date {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -1240,16 +1236,16 @@ label {
   cursor: pointer;
 }
 
-#booking-date::-webkit-date-and-time-value {
+.app-shell:not(.admin-shell) #booking-date::-webkit-date-and-time-value {
   color: transparent;
 }
 
-#booking-date::-webkit-calendar-picker-indicator {
+.app-shell:not(.admin-shell) #booking-date::-webkit-calendar-picker-indicator {
   opacity: 1;
   cursor: pointer;
 }
 
-.date-surface:focus-within {
+.app-shell:not(.admin-shell) .date-surface:focus-within {
   outline: 2px solid rgba(230, 57, 70, 0.6);
   outline-offset: 2px;
 }
@@ -1514,17 +1510,17 @@ button#save-button:disabled {
     justify-content: center;
   }
 
-  .date-surface,
-  #booking-date {
+  .app-shell:not(.admin-shell) .date-surface,
+  .app-shell:not(.admin-shell) #booking-date {
     width: 100%;
   }
 
-  #booking-date {
+  .app-shell:not(.admin-shell) #booking-date {
     display: block;
     text-align: center;
   }
 
-  #booking-date::-webkit-date-and-time-value {
+  .app-shell:not(.admin-shell) #booking-date::-webkit-date-and-time-value {
     text-align: center;
   }
 
