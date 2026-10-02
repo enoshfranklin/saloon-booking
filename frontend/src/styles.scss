@@ -1498,6 +1498,14 @@ button#save-button:disabled {
     width: 100%;
   }
 
+  .step-actions .secondary,
+  .step-actions .primary {
+    flex: 0 0 auto;
+    min-height: 48px;
+    width: min(100%, 280px);
+    align-self: center;
+  }
+
   .page-subtitle {
     font-size: 0.9rem;
   }
