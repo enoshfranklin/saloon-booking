@@ -1,6 +1,5 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { WebBackgroundComponent } from '../../shared/web-background/web-background.component';
 
 interface BookingConfirmationState {
   id?: string;
@@ -40,5 +39,11 @@ export class BookingConfirmationComponent implements OnInit {
     if (!this.booking.id && history.state?.booking) {
       this.booking = history.state.booking;
     }
+  }
+
+  goToMyBooking(): void {
+    void this.router.navigateByUrl('/').then(() => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   }
 }

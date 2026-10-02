@@ -1464,6 +1464,10 @@ button#save-button:disabled {
     flex-direction: column;
   }
 
+  .date-row {
+    align-items: stretch;
+  }
+
   .step-actions .secondary,
   .step-actions .primary,
   .compact-button {
