@@ -102,7 +102,6 @@ export class BookingPageComponent implements OnInit {
     const date = input.value;
     if (date < this.bookingService.todayDate()) {
       input.value = this.booking.date;
-      this.statusMessage.set('Past dates cannot be selected. Choose today or a future date.');
       return;
     }
 
@@ -128,7 +127,6 @@ export class BookingPageComponent implements OnInit {
       return;
     }
     if (this.booking.date < this.bookingService.todayDate()) {
-      this.statusMessage.set('Please choose today or a future date.');
       return;
     }
     if (!this.booking.time) {

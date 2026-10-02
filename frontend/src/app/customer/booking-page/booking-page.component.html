@@ -64,7 +64,7 @@
                   <input type="date"
                          id="booking-date"
                       aria-label="Choose appointment date"
-                         [min]="minBookingDate"
+                         [attr.min]="minBookingDate"
                          [value]="booking.date"
                          (change)="onDateChange($event)"
                          required />
