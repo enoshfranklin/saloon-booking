@@ -43,6 +43,7 @@ export interface BookingRecord {
 export interface CreateBookingPayload {
   date: string;
   time: string;
+  timeZone: string;
   customerName: string;
   phone: string;
   email: string;
@@ -106,6 +107,23 @@ export class BookingService {
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
+  todayDate(): string {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
+  isPastDateTime(dateValue: string, timeValue: string, now = new Date()): boolean {
+    const minutes = this.parseTimeToMinutes(timeValue);
+    if (minutes === null || !/^\d{4}-\d{2}-\d{2}$/.test(dateValue)) return true;
+
+    const [year, month, day] = dateValue.split('-').map(Number);
+    const appointment = new Date(year, month - 1, day, Math.floor(minutes / 60), minutes % 60);
+    return appointment.getTime() <= now.getTime();
+  }
+
   /** Generate all time slots for a given date string (YYYY-MM-DD) */
   timeSlotsForDate(dateValue: string): TimeSlot[] {
     const [year, month, day] = dateValue.split('-').map(Number);
@@ -127,7 +145,9 @@ export class BookingService {
       .filter((m): m is number => m !== null);
 
     return this.timeSlotsForDate(dateValue).filter(
-      (slot) => !bookedMinutes.includes(slot.minutes)
+      (slot) =>
+        !bookedMinutes.includes(slot.minutes) &&
+        !this.isPastDateTime(dateValue, slot.value)
     );
   }
 

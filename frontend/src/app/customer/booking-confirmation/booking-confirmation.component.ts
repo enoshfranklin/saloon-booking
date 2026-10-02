@@ -15,7 +15,7 @@ interface BookingConfirmationState {
 @Component({
   selector: 'app-booking-confirmation',
   standalone: true,
-  imports: [RouterLink, WebBackgroundComponent],
+  imports: [RouterLink],
   templateUrl: './booking-confirmation.component.html',
   styleUrls: ['./booking-confirmation.component.scss'],
 })

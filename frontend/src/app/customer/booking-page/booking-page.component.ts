@@ -24,7 +24,7 @@ export interface BookingState {
 @Component({
   selector: 'app-booking-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, WebBackgroundComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './booking-page.component.html',
   styleUrls: ['./booking-page.component.scss'],
 })
@@ -55,7 +55,7 @@ export class BookingPageComponent implements OnInit {
 
   booking: BookingState = {
     service: '',
-    date: new Date().toISOString().slice(0, 10),
+    date: this.bookingService.todayDate(),
     time: '',
     customerName: '',
     phone: '',
@@ -104,7 +104,7 @@ export class BookingPageComponent implements OnInit {
   }
 
   onTodayClick(): void {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = this.bookingService.todayDate();
     this.booking.date = today;
     this.booking.time = '';
     this.loadBookings(today);
@@ -121,6 +121,10 @@ export class BookingPageComponent implements OnInit {
     }
     if (!this.booking.time) {
       this.statusMessage.set('Please choose an available time.');
+      return;
+    }
+    if (this.bookingService.isPastDateTime(this.booking.date, this.booking.time)) {
+      this.statusMessage.set('Please choose a future date and time.');
       return;
     }
     this.statusMessage.set('');
@@ -148,6 +152,11 @@ export class BookingPageComponent implements OnInit {
     }
     if (!this.booking.time) {
       this.statusMessage.set('Please choose an available time slot.');
+      this.goToStep(2);
+      return;
+    }
+    if (this.bookingService.isPastDateTime(this.booking.date, this.booking.time)) {
+      this.statusMessage.set('Please choose a future date and time.');
       this.goToStep(2);
       return;
     }
@@ -188,6 +197,7 @@ export class BookingPageComponent implements OnInit {
     const payload: CreateBookingPayload = {
       date: this.booking.date,
       time: this.booking.time,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       customerName: this.booking.customerName.trim(),
       phone: this.booking.phone.trim(),
       email: this.booking.email.trim(),
@@ -244,5 +254,9 @@ export class BookingPageComponent implements OnInit {
 
   formatDate(dateValue: string): string {
     return this.bookingService.formatDate(dateValue);
+  }
+
+  get minBookingDate(): string {
+    return this.bookingService.todayDate();
   }
 }

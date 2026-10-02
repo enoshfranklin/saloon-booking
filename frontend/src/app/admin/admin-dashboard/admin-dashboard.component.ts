@@ -7,7 +7,7 @@ import { WebBackgroundComponent } from '../../shared/web-background/web-backgrou
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, WebBackgroundComponent],
+  imports: [CommonModule, FormsModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss'],
 })

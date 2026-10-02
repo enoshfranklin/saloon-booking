@@ -1,5 +1,4 @@
 @use './styles/variables' as *;
-@use './styles/animations' as *;
 
 :root {
   color-scheme: dark;
@@ -89,7 +88,6 @@ body::before {
     linear-gradient(45deg, transparent 49.3%, rgba(79,170,254,0.06) 50%, transparent 50.7%),
     linear-gradient(-45deg, transparent 49.3%, rgba(79,170,254,0.06) 50%, transparent 50.7%);
   opacity: 0.22;
-  animation: webLines 2.6s ease-in-out infinite alternate;
 }
 
 .web-background::after {
@@ -98,7 +96,6 @@ body::before {
   border-radius: 50%;
   opacity: 0.15;
   transform: scale(0.95);
-  animation: webPulse 6s ease-in-out infinite alternate;
 }
 
 .web-orbit {
@@ -111,7 +108,6 @@ body::before {
   border: 1px solid rgba(79, 170, 254, 0.12);
   border-radius: 50%;
   opacity: 0.18;
-  animation: webTrace 2.4s ease-in-out infinite alternate;
 }
 
 .web-orbit-two {
@@ -129,7 +125,6 @@ body::before {
   height: 26px;
   transform: translate(-50%, 0);
   opacity: 0.5;
-  animation: spiderFloat 7s ease-in-out infinite;
 }
 
 .spider::before,
@@ -173,7 +168,6 @@ body::before {
   font-size: 2.4rem;
   opacity: 0.16;
   transform: rotate(8deg);
-  animation: webEmojiFloat 16s ease-in-out infinite;
 }
 
 .container {
@@ -192,7 +186,6 @@ body::before {
   text-align: center;
   margin: 0 auto 24px;
   position: relative;
-  animation: slideInUp 0.45s ease-out both;
 }
 
 .brand-pill {
@@ -250,7 +243,6 @@ h1 .slot-word,
   display: block;
   max-width: 800px;
   margin: 0 auto;
-  animation: slideInUp 0.4s ease-out both;
 }
 
 .booking-progress,
@@ -332,7 +324,6 @@ h1 .slot-word,
   background: var(--success);
   border-color: var(--success);
   color: var(--white);
-  animation: scaleIn 0.6s ease-out both;
 }
 
 .progress-item.complete .step-number::before,
@@ -394,18 +385,15 @@ h1 .slot-word,
 .booking-step,
 .form-step {
   display: none;
-  animation: fadeIn 0.3s ease-out both;
 }
 
 .booking-step.active,
 .form-step.active {
   display: block;
-  animation: slideInUp 0.4s ease-out both;
 }
 
 .booking-step.exit,
 .form-step.exit {
-  animation: slideOutDown 0.4s ease-out both;
 }
 
 .step-header {
@@ -459,7 +447,6 @@ h1 .slot-word,
   color: #fff;
   box-shadow: 0 0 0 1px rgba(255, 77, 109, 0.2), 0 12px 25px rgba(255, 77, 109, 0.14);
   transform: scale(1.01);
-  animation: scaleIn 0.3s ease-out both;
 }
 
 .service-name {
@@ -812,11 +799,10 @@ button#save-button:disabled {
   border-radius: 50%;
   border: 1px solid rgba(79, 170, 254, 0.12);
   opacity: 0.25;
-  animation: webDraw 2.6s ease-in-out infinite alternate;
 }
 
 .web-trail-left { transform: rotate(-18deg) scaleX(0.88); }
-.web-trail-right { transform: rotate(18deg) scaleX(0.88); animation-delay: 0.35s; }
+.web-trail-right { transform: rotate(18deg) scaleX(0.88); }
 
 .hero-silhouette {
   position: absolute;
@@ -825,7 +811,6 @@ button#save-button:disabled {
   width: 160px;
   height: 100px;
   transform: translateX(-50%);
-  animation: successSwing 3s ease-in-out infinite;
 }
 
 .hero-head,
@@ -966,7 +951,6 @@ button#save-button:disabled {
   color: var(--white);
   font-size: 36px;
   box-shadow: 0 12px 28px rgba(16,185,129,0.24);
-  animation: bounce 0.8s ease-out both;
 }
 
 .booking-id {
@@ -979,65 +963,6 @@ button#save-button:disabled {
 .loading-spinner,
 .loading-box {
   display: none;
-}
-
-@keyframes webLines {
-  0% {
-    opacity: 0.08;
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 0.18;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes webPulse {
-  0% {
-    opacity: 0.08;
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 0.14;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes webTrace {
-  0% {
-    opacity: 0.08;
-    transform: translateX(-50%) scale(0.96);
-  }
-  100% {
-    opacity: 0.16;
-    transform: translateX(-50%) scale(1.04);
-  }
-}
-
-@keyframes webDraw {
-  0% {
-    opacity: 0.12;
-    transform: scale(0.92) rotate(0deg);
-  }
-  100% {
-    opacity: 0.26;
-    transform: scale(1.04) rotate(6deg);
-  }
-}
-
-@keyframes successSwing {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-10px); }
-}
-
-@keyframes spiderFloat {
-  0%, 100% { transform: translate(-50%, 0px) scale(1); }
-  50% { transform: translate(-50%, -8px) scale(1.05); }
-}
-
-@keyframes webEmojiFloat {
-  0%, 100% { transform: rotate(8deg) translateY(0); }
-  50% { transform: rotate(8deg) translateY(-8px); }
 }
 
 @media (max-width: 768px) {
@@ -1502,88 +1427,6 @@ button#save-button:disabled {
 .input-label,
 .time-break {
   font-family: Inter, 'Segoe UI', sans-serif;
-}
-
-@keyframes webLines {
-  0% {
-    opacity: 0.08;
-    transform: scale(0.98);
-  }
-  100% {
-    opacity: 0.18;
-    transform: scale(1.04);
-  }
-}
-
-@keyframes webPulse {
-  0% {
-    opacity: 0.08;
-    transform: scale(0.92);
-  }
-  100% {
-    opacity: 0.12;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes webTrace {
-  0% {
-    opacity: 0.08;
-    transform: translateX(-50%) scale(0.96);
-  }
-  100% {
-    opacity: 0.14;
-    transform: translateX(-50%) scale(1.04);
-  }
-}
-
-@keyframes spiderFloat {
-  0%, 100% {
-    transform: translate(-50%, 0px) scale(1);
-  }
-  50% {
-    transform: translate(-50%, -10px) scale(1.03);
-  }
-}
-
-@keyframes webEmojiFloat {
-  0%, 100% {
-    transform: rotate(8deg) translateY(0);
-  }
-  50% {
-    transform: rotate(8deg) translateY(-8px);
-  }
-}
-
-@keyframes webFloat {
-  0%, 100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
 }
 
 @media (max-width: 640px) {

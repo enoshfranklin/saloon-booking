@@ -5,7 +5,7 @@ import { SpidermanAnimationComponent } from './shared/spiderman-animation/spider
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, SpidermanAnimationComponent],
+  imports: [RouterOutlet],
   template: `
     <div class="web-background" aria-hidden="true">
       <div class="web-orbit"></div>
@@ -15,7 +15,6 @@ import { SpidermanAnimationComponent } from './shared/spiderman-animation/spider
       </div>
       <div class="web-emoji">🕸️</div>
     </div>
-    <app-spiderman-animation></app-spiderman-animation>
     <router-outlet />
   `,
 })

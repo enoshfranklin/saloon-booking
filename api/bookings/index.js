@@ -1,6 +1,7 @@
 const { pool, initDb } = require('../db');
 const { callSupabaseBookingEmail } = require('../email-notify');
 const crypto = require('crypto');
+const { isValidBookingDate, isBookingDateTimeInPast } = require('../booking-time');
 
 // 45-minute booking slots aligned to the salon schedule: 10:30 AM to 1:30 PM, then 2:30 PM to 7:30 PM
 const ALLOWED_SLOT_MINUTES = new Set([
@@ -84,15 +85,22 @@ module.exports = async (req, res) => {
       } catch (error) {
         return jsonResponse(res, 400, { error: error.message });
       }
-      const { date, time, customerName, phone, service, email } = body;
+      const { date, time, customerName, phone, service, email, timeZone } = body;
       if (!date || !time || !customerName) {
         return jsonResponse(res, 400, { error: 'date, time, and customerName are required' });
+      }
+
+      if (!isValidBookingDate(date)) {
+        return jsonResponse(res, 400, { error: 'Invalid booking date' });
       }
 
       // Validate time slot is allowed
       const minutes = parseTimeLabelToMinutes(time);
       if (minutes === null || !ALLOWED_SLOT_MINUTES.has(minutes)) {
         return jsonResponse(res, 400, { error: 'Invalid or unavailable time slot' });
+      }
+      if (isBookingDateTimeInPast(date, minutes, new Date(), timeZone)) {
+        return jsonResponse(res, 400, { error: 'Past dates and times cannot be booked' });
       }
 
       const sanitizedEmail = typeof email === 'string' ? email.trim() : '';
