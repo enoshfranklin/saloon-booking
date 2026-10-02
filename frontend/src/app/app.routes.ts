@@ -16,6 +16,13 @@ export const routes: Routes = [
       ),
   },
   {
+    path: 'booking/details',
+    loadComponent: () =>
+      import('./customer/booking-confirmation/booking-confirmation.component').then(
+        (m) => m.BookingConfirmationComponent
+      ),
+  },
+  {
     path: 'admin',
     loadComponent: () =>
       import('./admin/admin-dashboard/admin-dashboard.component').then(
